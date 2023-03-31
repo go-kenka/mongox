@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"github.com/go-kenka/mongox/examples/data/bsonx"
+	"github.com/go-kenka/mongox/bsonx"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
