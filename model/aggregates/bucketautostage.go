@@ -44,7 +44,7 @@ type bucketAutoStage[T expression.AnyExpression] struct {
 }
 
 func (bs bucketAutoStage[T]) Bson() bsonx.Bson {
-	return bs.ToBsonDocument()
+	return bs.Pro()
 }
 
 func NewBucketAutoStage[T expression.AnyExpression](groupBy T, buckets int32, options options.BucketAutoOptions) bucketAutoStage[T] {
@@ -55,7 +55,7 @@ func NewBucketAutoStage[T expression.AnyExpression](groupBy T, buckets int32, op
 	}
 }
 
-func (bs bucketAutoStage[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (bs bucketAutoStage[T]) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("groupBy", bs.groupBy)
 
@@ -66,7 +66,7 @@ func (bs bucketAutoStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 	if len(output) > 0 {
 		out := bsonx.BsonEmpty()
 		for _, field := range output {
-			out.Append(field.GetName(), field.GetValue().ToBsonDocument())
+			out.Append(field.GetName(), field.GetValue().Pro())
 		}
 		data.Append("output", out)
 	}
@@ -80,5 +80,5 @@ func (bs bucketAutoStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 	return b
 }
 func (bs bucketAutoStage[T]) Document() bson.D {
-	return bs.ToBsonDocument().Document()
+	return bs.Pro().Document()
 }

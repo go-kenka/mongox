@@ -24,7 +24,7 @@ type sortByCountStage[T expression.AnyExpression] struct {
 }
 
 func (bs sortByCountStage[T]) Bson() bsonx.Bson {
-	return bs.ToBsonDocument()
+	return bs.Pro()
 }
 
 func NewSortByCountStage[T expression.AnyExpression](filter T) sortByCountStage[T] {
@@ -33,9 +33,9 @@ func NewSortByCountStage[T expression.AnyExpression](filter T) sortByCountStage[
 	}
 }
 
-func (bs sortByCountStage[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (bs sortByCountStage[T]) Pro() *bsonx.BsonDocument {
 	return bsonx.BsonDoc("$sortByCount", bs.filter)
 }
 func (bs sortByCountStage[T]) Document() bson.D {
-	return bs.ToBsonDocument().Document()
+	return bs.Pro().Document()
 }

@@ -36,7 +36,7 @@ type groupStage[T expression.AnyExpression] struct {
 }
 
 func (bs groupStage[T]) Bson() bsonx.Bson {
-	return bs.ToBsonDocument()
+	return bs.Pro()
 }
 
 func NewGroupStage[T expression.AnyExpression](id T, fieldAccumulators []accumulator.AccumulatorBson) groupStage[T] {
@@ -46,13 +46,13 @@ func NewGroupStage[T expression.AnyExpression](id T, fieldAccumulators []accumul
 	}
 }
 
-func (bs groupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (bs groupStage[T]) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("_id", bs.id)
 
 	if len(bs.fieldAccumulators) > 0 {
 		for _, field := range bs.fieldAccumulators {
-			data = bsonx.NewMerged(data, field.ToBsonDocument())
+			data = bsonx.NewMerged(data, field.Pro())
 		}
 	}
 
@@ -61,5 +61,5 @@ func (bs groupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (bs groupStage[T]) Document() bson.D {
-	return bs.ToBsonDocument().Document()
+	return bs.Pro().Document()
 }

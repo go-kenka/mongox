@@ -11,7 +11,7 @@ type typeOperator struct {
 }
 
 func (o typeOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 // Convert Converts a value to a specified type.
@@ -28,10 +28,10 @@ func Convert[E expression.AnyExpression, T expression.IntStrExpression](input E,
 	data := bsonx.BsonDoc("input", input)
 	data.Append("to", to)
 	if options.onError != nil {
-		data.Append("onError", options.onError.ToBsonDocument())
+		data.Append("onError", options.onError.Pro())
 	}
 	if options.onNull != nil {
-		data.Append("onNull", options.onNull.ToBsonDocument())
+		data.Append("onNull", options.onNull.Pro())
 	}
 
 	return typeOperator{doc: bsonx.BsonDoc("$convert", data)}

@@ -41,7 +41,7 @@ type replaceStage[T expression.AnyExpression] struct {
 }
 
 func (f replaceStage[T]) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewReplaceStage[T expression.AnyExpression](value T, replaceWith bool) replaceStage[T] {
@@ -51,7 +51,7 @@ func NewReplaceStage[T expression.AnyExpression](value T, replaceWith bool) repl
 	}
 }
 
-func (f replaceStage[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (f replaceStage[T]) Pro() *bsonx.BsonDocument {
 	if f.replaceWith {
 		return bsonx.BsonDoc("$replaceWith", f.value)
 	}
@@ -62,5 +62,5 @@ func (f replaceStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f replaceStage[T]) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

@@ -52,7 +52,7 @@ type setWindowFieldsStage[T expression.AnyExpression, O window.WindowOutputField
 }
 
 func (f setWindowFieldsStage[T, O]) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewSetWindowFieldsStage[T expression.AnyExpression, O window.WindowOutputField](
@@ -67,14 +67,14 @@ func NewSetWindowFieldsStage[T expression.AnyExpression, O window.WindowOutputFi
 	}
 }
 
-func (f setWindowFieldsStage[T, O]) ToBsonDocument() *bsonx.BsonDocument {
+func (f setWindowFieldsStage[T, O]) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonEmpty()
 	if f.partitionBy != nil {
 		data.Append("partitionBy", f.partitionBy)
 	}
 	if f.sortBy != nil {
-		data.Append("sortBy", f.sortBy.ToBsonDocument())
+		data.Append("sortBy", f.sortBy.Pro())
 	}
 	output := bsonx.BsonEmpty()
 	for _, s := range f.output {
@@ -87,5 +87,5 @@ func (f setWindowFieldsStage[T, O]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f setWindowFieldsStage[T, O]) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

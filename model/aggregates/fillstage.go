@@ -41,7 +41,7 @@ type fillStage struct {
 }
 
 func (f fillStage) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewFillStage(
@@ -54,12 +54,12 @@ func NewFillStage(
 	}
 }
 
-func (f fillStage) ToBsonDocument() *bsonx.BsonDocument {
+func (f fillStage) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
-	doc = bsonx.NewMerged(doc, f.options.ToBsonDocument())
+	doc = bsonx.NewMerged(doc, f.options.Pro())
 	outputDoc := bsonx.BsonEmpty()
 	for _, computation := range f.output {
-		computationDoc := computation.ToBsonDocument()
+		computationDoc := computation.Pro()
 		if computationDoc.Size() == 1 {
 			outputDoc = bsonx.NewMerged(outputDoc, computationDoc)
 		}
@@ -69,5 +69,5 @@ func (f fillStage) ToBsonDocument() *bsonx.BsonDocument {
 	return bsonx.BsonDoc("$fill", doc)
 }
 func (f fillStage) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

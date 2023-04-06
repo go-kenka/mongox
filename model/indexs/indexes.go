@@ -49,10 +49,10 @@ func newCompoundIndex(indexes ...bsonx.Bson) bsonx.Bson {
 	return compoundIndex{indexes: indexes}
 }
 
-func (i compoundIndex) ToBsonDocument() *bsonx.BsonDocument {
+func (i compoundIndex) Pro() *bsonx.BsonDocument {
 	c := bsonx.BsonEmpty()
 	for _, index := range i.indexes {
-		indexDocument := index.ToBsonDocument()
+		indexDocument := index.Pro()
 		for _, key := range indexDocument.Keys() {
 			c.Append(key, indexDocument.GetValue(key))
 		}
@@ -61,5 +61,5 @@ func (i compoundIndex) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (i compoundIndex) Document() bson.D {
-	return i.ToBsonDocument().Document()
+	return i.Pro().Document()
 }

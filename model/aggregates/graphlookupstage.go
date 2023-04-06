@@ -61,7 +61,7 @@ type graphLookupStage[T expression.AnyExpression] struct {
 }
 
 func (bs graphLookupStage[T]) Bson() bsonx.Bson {
-	return bs.ToBsonDocument()
+	return bs.Pro()
 }
 
 func NewGraphLookupStage[T expression.AnyExpression](
@@ -82,7 +82,7 @@ func NewGraphLookupStage[T expression.AnyExpression](
 	}
 }
 
-func (bs graphLookupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (bs graphLookupStage[T]) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("form", bsonx.String(bs.from))
 
@@ -98,12 +98,12 @@ func (bs graphLookupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 		data.Append("depthField", bsonx.String(bs.options.GetDepthField()))
 	}
 	if bs.options.GetRestrictSearchWithMatch() != nil {
-		data.Append("restrictSearchWithMatch", bs.options.GetRestrictSearchWithMatch().ToBsonDocument())
+		data.Append("restrictSearchWithMatch", bs.options.GetRestrictSearchWithMatch().Pro())
 	}
 	b.Append("$graphLookup", data)
 	return b
 }
 
 func (bs graphLookupStage[T]) Document() bson.D {
-	return bs.ToBsonDocument().Document()
+	return bs.Pro().Document()
 }

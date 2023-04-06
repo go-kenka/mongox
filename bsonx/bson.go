@@ -3,7 +3,7 @@ package bsonx
 import "go.mongodb.org/mongo-driver/bson"
 
 type Bson interface {
-	ToBsonDocument() *BsonDocument
+	Pro() *BsonDocument
 	Document() bson.D
 }
 

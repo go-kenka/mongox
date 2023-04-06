@@ -12,7 +12,7 @@ type arithmeticOperator struct {
 }
 
 func (o arithmeticOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 // Abs Returns the absolute value of a number.

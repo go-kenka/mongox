@@ -14,7 +14,7 @@ type trigonometryOperator struct {
 }
 
 func (o trigonometryOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 // Sin New in version 4.2. Returns the sine of a value that is measured in

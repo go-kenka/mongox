@@ -89,7 +89,7 @@ func NewUserAggregate() *UserAggregate {
 func (q UserAggregate) Save(ctx context.Context, pipe []aggregates.Stage, opts ...*options.AggregateOptions) error {
 	var stages mongo.Pipeline
 	for _, stage := range pipe {
-		stages = append(stages, stage.Bson().Document())
+		stages = append(stages, stage.Document())
 	}
 	_, err := q.cc.Aggregate(ctx, stages, opts...)
 	if err != nil {
@@ -101,7 +101,7 @@ func (q UserAggregate) Save(ctx context.Context, pipe []aggregates.Stage, opts .
 func (q UserAggregate) All(ctx context.Context, pipe []aggregates.Stage, result any, opts ...*options.AggregateOptions) (err error) {
 	var stages mongo.Pipeline
 	for _, stage := range pipe {
-		stages = append(stages, stage.Bson().Document())
+		stages = append(stages, stage.Document())
 	}
 	cursor, err := q.cc.Aggregate(ctx, stages, opts...)
 	if err != nil {
@@ -119,7 +119,7 @@ func (q UserAggregate) All(ctx context.Context, pipe []aggregates.Stage, result 
 func (q UserAggregate) Get(ctx context.Context, pipe []aggregates.Stage, result any, opts ...*options.AggregateOptions) (err error) {
 	var stages mongo.Pipeline
 	for _, stage := range pipe {
-		stages = append(stages, stage.Bson().Document())
+		stages = append(stages, stage.Document())
 	}
 	cursor, err := q.cc.Aggregate(ctx, stages, opts...)
 	if err != nil {

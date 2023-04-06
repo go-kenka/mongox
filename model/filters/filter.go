@@ -28,7 +28,7 @@ func newAddFilter[T Filter](filters []T) addFilter[T] {
 	}
 }
 
-func (s addFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s addFilter[T]) Pro() *bsonx.BsonDocument {
 	clauses := bsonx.Array()
 	for _, filter := range s.filters {
 		clauses.Append(filter.Value())
@@ -37,7 +37,7 @@ func (s addFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (s addFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type orNorFilter[T Filter] struct {
@@ -52,7 +52,7 @@ func newOrNorFilter[T Filter](operator Operator, filters []T) orNorFilter[T] {
 	}
 }
 
-func (s orNorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s orNorFilter[T]) Pro() *bsonx.BsonDocument {
 	filtersArray := bsonx.Array()
 	for _, filter := range s.filters {
 		filtersArray.Append(filter.Value())
@@ -61,7 +61,7 @@ func (s orNorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (s orNorFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type Operator struct {
@@ -103,7 +103,7 @@ func newNotFilter[T Filter](value T) notFilter[T] {
 	}
 }
 
-func (f notFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (f notFilter[T]) Pro() *bsonx.BsonDocument {
 	filter := f.filter.Value()
 	if filter.IsDocument() {
 		filterDocument := filter.AsDocument()
@@ -125,7 +125,7 @@ func (f notFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f notFilter[T]) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }
 
 func (f notFilter[T]) createFilter(fieldName string, value bsonx.IBsonValue) *bsonx.BsonDocument {
@@ -182,12 +182,12 @@ func newSimpleFilter(fieldName string, value bsonx.IBsonValue) simpleFilter {
 	}
 }
 
-func (s simpleFilter) ToBsonDocument() *bsonx.BsonDocument {
+func (s simpleFilter) Pro() *bsonx.BsonDocument {
 	return bsonx.BsonDoc(s.fieldName, s.value)
 }
 
 func (s simpleFilter) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type operatorFilter[T bsonx.Expression] struct {
@@ -204,14 +204,14 @@ func newOperatorFilter[T bsonx.Expression](operatorName string, fieldName string
 	}
 }
 
-func (s operatorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s operatorFilter[T]) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	operator := bsonx.BsonDoc(s.operatorName, s.value)
 	doc.Append(s.fieldName, operator)
 	return doc
 }
 func (s operatorFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type iterableOperatorFilter[T bsonx.Expression] struct {
@@ -228,7 +228,7 @@ func newIterableOperatorFilter[T bsonx.Expression](fieldName string, operatorNam
 	}
 }
 
-func (s iterableOperatorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s iterableOperatorFilter[T]) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	values := bsonx.Array()
 	for _, value := range s.values {
@@ -240,7 +240,7 @@ func (s iterableOperatorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (s iterableOperatorFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type simpleEncodingFilter[T bsonx.Expression] struct {
@@ -255,12 +255,12 @@ func newSimpleEncodingFilter[T bsonx.Expression](fieldName string, value T) simp
 	}
 }
 
-func (s simpleEncodingFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s simpleEncodingFilter[T]) Pro() *bsonx.BsonDocument {
 	return bsonx.BsonDoc(s.fieldName, s.value)
 }
 
 func (s simpleEncodingFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type geometryOperatorFilter[T bsonx.Expression] struct {
@@ -287,7 +287,7 @@ func newGeometryOperatorFilter[T bsonx.Expression](
 	}
 }
 
-func (s geometryOperatorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s geometryOperatorFilter[T]) Pro() *bsonx.BsonDocument {
 	operator := bsonx.BsonEmpty()
 	geometry := bsonx.BsonEmpty()
 	geometry.Append("$geometry", s.geometry)
@@ -302,7 +302,7 @@ func (s geometryOperatorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (s geometryOperatorFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type textFilter struct {
@@ -320,7 +320,7 @@ func newTextFilter(
 	}
 }
 
-func (s textFilter) ToBsonDocument() *bsonx.BsonDocument {
+func (s textFilter) Pro() *bsonx.BsonDocument {
 	searchDocument := bsonx.BsonDoc("$search", bsonx.String(s.search))
 	if s.textSearchOptions.HasLanguage() {
 		searchDocument.Append("$language", bsonx.String(s.textSearchOptions.GetLanguage()))
@@ -334,5 +334,5 @@ func (s textFilter) ToBsonDocument() *bsonx.BsonDocument {
 	return bsonx.BsonDoc("$text", searchDocument)
 }
 func (s textFilter) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }

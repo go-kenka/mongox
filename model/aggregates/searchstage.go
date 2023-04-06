@@ -98,7 +98,7 @@ type searchStage struct {
 }
 
 func (f searchStage) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewSearchStage(
@@ -113,10 +113,10 @@ func NewSearchStage(
 	}
 }
 
-func (f searchStage) ToBsonDocument() *bsonx.BsonDocument {
+func (f searchStage) Pro() *bsonx.BsonDocument {
 	return bsonx.BsonEmpty()
 }
 
 func (f searchStage) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

@@ -36,7 +36,7 @@ type densifyStage struct {
 }
 
 func (f densifyStage) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewDensifyStage(
@@ -51,12 +51,12 @@ func NewDensifyStage(
 	}
 }
 
-func (f densifyStage) ToBsonDocument() *bsonx.BsonDocument {
+func (f densifyStage) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonDoc("field", bsonx.String(f.field))
-	doc.Append("range", f.densifyRange.ToBsonDocument())
-	return bsonx.NewMerged(doc, f.options.ToBsonDocument())
+	doc.Append("range", f.densifyRange.Pro())
+	return bsonx.NewMerged(doc, f.options.Pro())
 }
 
 func (f densifyStage) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

@@ -21,8 +21,8 @@ func NewFillConstructibleBson(base bsonx.Bson, appended bsonx.Document) FillCons
 	return a
 }
 
-func (a FillConstructibleBson) ToBsonDocument() *bsonx.BsonDocument {
-	baseDoc := a.base.ToBsonDocument()
+func (a FillConstructibleBson) Pro() *bsonx.BsonDocument {
+	baseDoc := a.base.Pro()
 	if baseDoc.IsEmpty() && a.appended.IsEmpty() {
 		return bsonx.BsonEmpty()
 	}
@@ -31,11 +31,11 @@ func (a FillConstructibleBson) ToBsonDocument() *bsonx.BsonDocument {
 		return baseDoc
 	}
 
-	return bsonx.NewMerged(baseDoc, a.appended.ToBsonDocument())
+	return bsonx.NewMerged(baseDoc, a.appended.Pro())
 }
 
 func (a FillConstructibleBson) Document() bson.D {
-	return a.ToBsonDocument().Document()
+	return a.Pro().Document()
 }
 
 func (a FillConstructibleBson) newAppended(name string, value any) FillConstructibleBson {
@@ -64,7 +64,7 @@ func (a FillConstructibleBson) of(doc bsonx.Bson) FillConstructibleBson {
 	return NewFillConstructibleBson(doc, nil)
 }
 func (a FillConstructibleBson) remove(key string) FillConstructibleBson {
-	doc := a.base.ToBsonDocument()
+	doc := a.base.Pro()
 	doc.Remove(key)
 	appended := a.appended
 	appended.Remove(key)

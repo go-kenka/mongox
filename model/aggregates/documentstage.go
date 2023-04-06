@@ -19,7 +19,7 @@ type documentsStage struct {
 }
 
 func (f documentsStage) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewDocumentsStage(documents []bsonx.Bson) documentsStage {
@@ -28,11 +28,11 @@ func NewDocumentsStage(documents []bsonx.Bson) documentsStage {
 	}
 }
 
-func (f documentsStage) ToBsonDocument() *bsonx.BsonDocument {
+func (f documentsStage) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	documents := bsonx.Array()
 	for _, value := range f.documents {
-		documents.Append(value.ToBsonDocument())
+		documents.Append(value.Pro())
 	}
 
 	doc.Append("$documents", documents)
@@ -40,5 +40,5 @@ func (f documentsStage) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f documentsStage) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

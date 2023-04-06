@@ -11,7 +11,7 @@ type arrayOperator struct {
 }
 
 func (o arrayOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 // ArrayElemAt Returns the element at the specified array index.
@@ -237,7 +237,7 @@ func Slice[A expression.ArrayExpression, N expression.IntExpression](input A, po
 //	}
 func SortArray[A expression.ArrayExpression](input A, sortBy bsonx.Bson) arrayOperator {
 	return arrayOperator{doc: bsonx.BsonDoc("$sortArray", bsonx.BsonDoc("input", input).
-		Append("sortBy", sortBy.ToBsonDocument()))}
+		Append("sortBy", sortBy.Pro()))}
 }
 
 // Zip Transposes an array of input arrays so that the first element of the output array would be an array containing, the first element of the first input array, the first element of the second input array, etc.

@@ -77,7 +77,7 @@ type lookupStage[T expression.AnyExpression] struct {
 }
 
 func (bs lookupStage[T]) Bson() bsonx.Bson {
-	return bs.ToBsonDocument()
+	return bs.Pro()
 }
 
 func NewLookupStage[T expression.AnyExpression](
@@ -94,7 +94,7 @@ func NewLookupStage[T expression.AnyExpression](
 	}
 }
 
-func (bs lookupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (bs lookupStage[T]) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("form", bsonx.String(bs.from))
 
@@ -109,7 +109,7 @@ func (bs lookupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 	if len(bs.pipeline) > 0 {
 		pipeline := bsonx.Array()
 		for _, p := range bs.pipeline {
-			pipeline.Append(p.ToBsonDocument())
+			pipeline.Append(p.Pro())
 		}
 		data.Append("pipeline", pipeline)
 	}
@@ -118,5 +118,5 @@ func (bs lookupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 	return b
 }
 func (bs lookupStage[T]) Document() bson.D {
-	return bs.ToBsonDocument().Document()
+	return bs.Pro().Document()
 }

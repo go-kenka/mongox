@@ -14,7 +14,7 @@ type comparisonOperator struct {
 }
 
 func (o comparisonOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 // Cmp Compares two values and returns:

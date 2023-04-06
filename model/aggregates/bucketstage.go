@@ -26,7 +26,7 @@ type bucketStage[T expression.AnyExpression, B expression.NumberExpression] stru
 }
 
 func (bs bucketStage[T, B]) Bson() bsonx.Bson {
-	return bs.ToBsonDocument()
+	return bs.Pro()
 }
 
 func NewBucketStage[T expression.AnyExpression, B expression.NumberExpression](groupBy T, boundaries []B, options options.AggBucketOptions) bucketStage[T, B] {
@@ -37,7 +37,7 @@ func NewBucketStage[T expression.AnyExpression, B expression.NumberExpression](g
 	}
 }
 
-func (bs bucketStage[T, B]) ToBsonDocument() *bsonx.BsonDocument {
+func (bs bucketStage[T, B]) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("groupBy", bs.groupBy)
 
@@ -58,7 +58,7 @@ func (bs bucketStage[T, B]) ToBsonDocument() *bsonx.BsonDocument {
 	if len(output) > 0 {
 		out := bsonx.BsonEmpty()
 		for _, field := range output {
-			out.Append(field.GetName(), field.GetValue().ToBsonDocument())
+			out.Append(field.GetName(), field.GetValue().Pro())
 		}
 		data.Append("output", out)
 	}
@@ -67,5 +67,5 @@ func (bs bucketStage[T, B]) ToBsonDocument() *bsonx.BsonDocument {
 	return b
 }
 func (bs bucketStage[T, B]) Document() bson.D {
-	return bs.ToBsonDocument().Document()
+	return bs.Pro().Document()
 }

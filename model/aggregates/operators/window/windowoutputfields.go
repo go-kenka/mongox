@@ -12,7 +12,7 @@ type outputOperator struct {
 }
 
 func (o outputOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 // AddToSet Returns an array of all unique values that results from applying an
@@ -33,7 +33,7 @@ func Avg[T expression.AnyExpression](path string, e T, window Window) outputOper
 // stages.
 func Bottom[O expression.AnyExpression](path string, sortBy bsonx.Bson, out O, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
-	args[SortBy] = sortBy.ToBsonDocument()
+	args[SortBy] = sortBy.Pro()
 	args[Output] = out
 	return compoundParameterWindowFunction(path, "$bottom", args, window)
 }
@@ -244,7 +244,7 @@ func Sum[T expression.AnyExpression](path string, e T, window Window) outputOper
 // order. NewStage in version 5.2. Available in $group and $setWindowFields stages.
 func Top[O expression.AnyExpression](path string, sortBy bsonx.Bson, out O, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
-	args[SortBy] = sortBy.ToBsonDocument()
+	args[SortBy] = sortBy.Pro()
 	args[Output] = out
 	return compoundParameterWindowFunction(path, "$top", args, window)
 }
@@ -254,7 +254,7 @@ func Top[O expression.AnyExpression](path string, sortBy bsonx.Bson, out O, wind
 // $setWindowFields stages.
 func TopN[O expression.AnyExpression, N expression.IntExpression](path string, sortBy bsonx.Bson, out O, n N, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
-	args[SortBy] = sortBy.ToBsonDocument()
+	args[SortBy] = sortBy.Pro()
 	args[Output] = out
 	args[NLowercase] = n
 	return compoundParameterWindowFunction(path, "$topN", args, window)
@@ -286,10 +286,10 @@ func NewSimpleParameterFunctionAndWindow[T expression.Expression](functionName s
 }
 
 func (a SimpleParameterFunctionAndWindow[T]) Exp() bsonx.IBsonValue {
-	return a.ToBsonDocument()
+	return a.Pro()
 }
 
-func (a SimpleParameterFunctionAndWindow[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (a SimpleParameterFunctionAndWindow[T]) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	if a.expression != nil {
 		doc.Append(a.functionName, a.expression.Exp())
@@ -301,7 +301,7 @@ func (a SimpleParameterFunctionAndWindow[T]) ToBsonDocument() *bsonx.BsonDocumen
 }
 
 func (a SimpleParameterFunctionAndWindow[T]) Document() bson.D {
-	return a.ToBsonDocument().Document()
+	return a.Pro().Document()
 }
 
 type AbstractFunctionAndWindow struct {
@@ -317,20 +317,20 @@ func NewAbstractFunctionAndWindow(functionName string, window Window) AbstractFu
 }
 
 func (a AbstractFunctionAndWindow) Exp() bsonx.IBsonValue {
-	return a.ToBsonDocument()
+	return a.Pro()
 }
 
-func (a AbstractFunctionAndWindow) ToBsonDocument() *bsonx.BsonDocument {
-	return bsonx.BsonDoc("window", a.window.ToBsonDocument())
+func (a AbstractFunctionAndWindow) Pro() *bsonx.BsonDocument {
+	return bsonx.BsonDoc("window", a.window.Pro())
 }
 
 func (a AbstractFunctionAndWindow) Document() bson.D {
-	return a.ToBsonDocument().Document()
+	return a.Pro().Document()
 }
 
 func (a AbstractFunctionAndWindow) writeWindow(doc *bsonx.BsonDocument) {
 	if a.window != nil {
-		doc.Append("window", a.window.ToBsonDocument())
+		doc.Append("window", a.window.Pro())
 	}
 }
 
@@ -366,7 +366,7 @@ func NewCompoundParameterFunctionAndWindow[T expression.Expression](functionName
 	}
 }
 
-func (a CompoundParameterFunctionAndWindow[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (a CompoundParameterFunctionAndWindow[T]) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	args := bsonx.BsonEmpty()
 	for name, value := range a.args {
@@ -378,9 +378,9 @@ func (a CompoundParameterFunctionAndWindow[T]) ToBsonDocument() *bsonx.BsonDocum
 }
 
 func (a CompoundParameterFunctionAndWindow[T]) Exp() bsonx.IBsonValue {
-	return a.ToBsonDocument()
+	return a.Pro()
 }
 
 func (a CompoundParameterFunctionAndWindow[T]) Document() bson.D {
-	return a.ToBsonDocument().Document()
+	return a.Pro().Document()
 }

@@ -10,7 +10,7 @@ type sizeOperator struct {
 }
 
 func (o sizeOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 func BinarySize[T expression.BinaryExpression](n T) sizeOperator {

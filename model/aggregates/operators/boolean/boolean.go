@@ -16,7 +16,7 @@ type booleanOperator struct {
 }
 
 func (o booleanOperator) Exp() bsonx.IBsonValue {
-	return o.doc.ToBsonDocument()
+	return o.doc.Pro()
 }
 
 // And Evaluates one or more expressions and returns true if all of the
@@ -58,7 +58,7 @@ func NewAddFilter[T expression.AnyExpression](filters []T) addFilter[T] {
 	}
 }
 
-func (s addFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s addFilter[T]) Pro() *bsonx.BsonDocument {
 	clauses := bsonx.Array()
 	for _, filter := range s.filters {
 		clauses.Append(filter)
@@ -67,7 +67,7 @@ func (s addFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (s addFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type orNorFilter[T expression.AnyExpression] struct {
@@ -82,7 +82,7 @@ func NewOrNorFilter[T expression.AnyExpression](operator Operator, filters []T) 
 	}
 }
 
-func (s orNorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s orNorFilter[T]) Pro() *bsonx.BsonDocument {
 	filtersArray := bsonx.Array()
 	for _, filter := range s.filters {
 		filtersArray.Append(filter)
@@ -91,7 +91,7 @@ func (s orNorFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (s orNorFilter[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type Operator struct {
@@ -133,7 +133,7 @@ func NewNotFilter[T expression.AnyExpression](value T) notFilter[T] {
 	}
 }
 
-func (f notFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (f notFilter[T]) Pro() *bsonx.BsonDocument {
 	if f.filter.IsDocument() {
 		filterDocument := f.filter.AsDocument()
 
@@ -154,7 +154,7 @@ func (f notFilter[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f notFilter[T]) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }
 
 func (f notFilter[T]) createFilter(fieldName string, value bsonx.IBsonValue) *bsonx.BsonDocument {

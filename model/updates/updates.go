@@ -62,7 +62,7 @@ func Pull[I bsonx.Expression](fieldName string, value I) bsonx.Bson {
 	return NewSimpleUpdate(fieldName, value, "$pull")
 }
 func PullByFilter(filter bsonx.Bson) bsonx.Bson {
-	return bsonx.BsonDoc("$pull", filter.ToBsonDocument())
+	return bsonx.BsonDoc("$pull", filter.Pro())
 }
 func PullAll[I bsonx.Expression](fieldName string, values []I) bsonx.Bson {
 	return NewPullAllUpdate(fieldName, values)
@@ -102,11 +102,11 @@ func NewSimpleBsonKeyValue(fieldName string, value bsonx.Bson) SimpleBsonKeyValu
 	}
 }
 
-func (s SimpleBsonKeyValue) ToBsonDocument() *bsonx.BsonDocument {
-	return bsonx.BsonDoc(s.fieldName, s.value.ToBsonDocument())
+func (s SimpleBsonKeyValue) Pro() *bsonx.BsonDocument {
+	return bsonx.BsonDoc(s.fieldName, s.value.Pro())
 }
 func (s SimpleBsonKeyValue) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type SimpleUpdate[T bsonx.Expression] struct {
@@ -123,12 +123,12 @@ func NewSimpleUpdate[T bsonx.Expression](fieldName string, value T, operator str
 	}
 }
 
-func (s SimpleUpdate[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (s SimpleUpdate[T]) Pro() *bsonx.BsonDocument {
 	return bsonx.BsonDoc(s.operator, bsonx.BsonDoc(s.fieldName, s.value))
 }
 
 func (s SimpleUpdate[T]) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
 
 type WithEachUpdate[T bsonx.Expression] struct {
@@ -151,7 +151,7 @@ func (w WithEachUpdate[T]) additionalFieldsToString() string {
 	return ""
 }
 
-func (w WithEachUpdate[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (w WithEachUpdate[T]) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	values := bsonx.Array()
 	for _, value := range w.values {
@@ -164,7 +164,7 @@ func (w WithEachUpdate[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (w WithEachUpdate[T]) Document() bson.D {
-	return w.ToBsonDocument().Document()
+	return w.Pro().Document()
 }
 
 type PushUpdate[T bsonx.Expression] struct {
@@ -191,7 +191,7 @@ func (p PushUpdate[T]) writeAdditionalFields(document *bsonx.BsonDocument) {
 	} else {
 		sortDocument := p.options.GetSortDocument()
 		if sortDocument != nil {
-			document.Append("$sort", sortDocument.ToBsonDocument())
+			document.Append("$sort", sortDocument.Pro())
 		}
 	}
 }
@@ -211,7 +211,7 @@ func NewPullAllUpdate[T bsonx.Expression](fieldName string, values []T) PullAllU
 	}
 }
 
-func (p PullAllUpdate[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (p PullAllUpdate[T]) Pro() *bsonx.BsonDocument {
 	values := bsonx.Array()
 	for _, value := range p.values {
 		values.Append(value)
@@ -220,7 +220,7 @@ func (p PullAllUpdate[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (p PullAllUpdate[T]) Document() bson.D {
-	return p.ToBsonDocument().Document()
+	return p.Pro().Document()
 }
 
 type CompositeUpdate struct {
@@ -233,10 +233,10 @@ func NewCompositeUpdate(updates []bsonx.Bson) CompositeUpdate {
 	}
 }
 
-func (p CompositeUpdate) ToBsonDocument() *bsonx.BsonDocument {
+func (p CompositeUpdate) Pro() *bsonx.BsonDocument {
 	document := bsonx.BsonEmpty()
 	for _, update := range p.updates {
-		rendered := update.ToBsonDocument()
+		rendered := update.Pro()
 		for _, v := range rendered.Data() {
 			if document.ContainsKey(v.Key) {
 				if v.Value.IsDocument() {
@@ -255,5 +255,5 @@ func (p CompositeUpdate) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (p CompositeUpdate) Document() bson.D {
-	return p.ToBsonDocument().Document()
+	return p.Pro().Document()
 }

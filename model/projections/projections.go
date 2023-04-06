@@ -2,110 +2,121 @@ package projections
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/model/aggregates"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func Computed[E bsonx.Expression](fieldName string, expression E) bsonx.Bson {
-	// return expr.NewSimpleExpression(fieldName, expression)
-	return nil
+type Projections interface {
+	Pro() *bsonx.BsonDocument
 }
 
-func ComputedSearchMeta(fieldName string) bsonx.Bson {
+type fields struct {
+	doc bsonx.Bson
+}
+
+func (p fields) Pro() *bsonx.BsonDocument {
+	return p.doc.Pro()
+}
+
+func Computed[E expression.AnyExpression](fieldName string, expression E) fields {
+	return fields{doc: aggregates.NewSimpleFilter(fieldName, expression)}
+}
+
+func ComputedSearchMeta(fieldName string) fields {
 	return Computed(fieldName, bsonx.String("$$SEARCH_META"))
 }
 
-func Include(fieldNames ...string) bsonx.Bson {
-	return Combine(fieldNames, bsonx.Int32(0))
+func Include(fieldNames ...string) fields {
+	return combine(fieldNames, bsonx.Int32(1))
 }
 
-func ExcludeId() bsonx.Bson {
-	return bsonx.BsonDoc("_id", bsonx.Int32(0))
+func ExcludeId() fields {
+	return fields{doc: bsonx.BsonDoc("_id", bsonx.Int32(0))}
 }
 
-func ElemMatch(fieldName string) bsonx.Bson {
-	return bsonx.BsonDoc(fieldName+".$", bsonx.Int32(1))
+func ElemMatch(fieldName string) fields {
+	return fields{doc: bsonx.BsonDoc(fieldName+".$", bsonx.Int32(1))}
 }
 
-func ElemMatchWithFilter(fieldName string, filter bsonx.Bson) bsonx.Bson {
-	return NewElemMatchFilterProjection(fieldName, filter)
+func ElemMatchWithFilter(fieldName string, filter bsonx.Bson) fields {
+	return fields{doc: newElemMatchFilterProjection(fieldName, filter)}
 }
 
-func Meta(fieldName string, metaFieldName string) bsonx.Bson {
-	return bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$meta", bsonx.String(metaFieldName)))
+func Meta(fieldName string, metaFieldName string) fields {
+	return fields{doc: bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$meta", bsonx.String(metaFieldName)))}
 }
 
-func MetaTextScore(fieldName string) bsonx.Bson {
+func MetaTextScore(fieldName string) fields {
 	return Meta(fieldName, "textScore")
 }
 
-func MetaSearchScore(fieldName string) bsonx.Bson {
+func MetaSearchScore(fieldName string) fields {
 	return Meta(fieldName, "searchScore")
 }
 
-func MetaSearchHighlights(fieldName string) bsonx.Bson {
+func MetaSearchHighlights(fieldName string) fields {
 	return Meta(fieldName, "searchHighlights")
 }
-func Slice(fieldName string, limit int32) bsonx.Bson {
-	return bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$slice", bsonx.Int32(limit)))
+func Slice(fieldName string, limit int32) fields {
+	return fields{doc: bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$slice", bsonx.Int32(limit)))}
 }
-func SliceWithSkip(fieldName string, limit, skip int32) bsonx.Bson {
-	return bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$slice", bsonx.Array(
-		bsonx.Int32(skip), bsonx.Int32(limit))))
-}
-
-func Fields(projections []bsonx.Bson) bsonx.Bson {
-	return NewFieldsProjection(projections)
+func SliceWithSkip(fieldName string, limit, skip int32) fields {
+	return fields{doc: bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$slice", bsonx.Array(
+		bsonx.Int32(skip), bsonx.Int32(limit))))}
 }
 
-func Combine(fieldNames []string, value bsonx.IBsonValue) bsonx.Bson {
+func Fields(projections ...fields) Projections {
+	return newFieldsProjection(projections)
+}
+
+func combine(fieldNames []string, value bsonx.IBsonValue) fields {
 	doc := bsonx.BsonEmpty()
 	for _, name := range fieldNames {
+		doc.Remove(name)
 		doc.Append(name, value)
 	}
-	return doc
+	return fields{doc: doc}
 }
 
-type FieldsProjection struct {
-	projections []bsonx.Bson
+type fieldsProjection struct {
+	projections []fields
 }
 
-func NewFieldsProjection(projections []bsonx.Bson) FieldsProjection {
-	return FieldsProjection{
+func newFieldsProjection(projections []fields) fieldsProjection {
+	return fieldsProjection{
 		projections: projections,
 	}
 }
 
-func (p FieldsProjection) ToBsonDocument() *bsonx.BsonDocument {
+func (p fieldsProjection) Pro() *bsonx.BsonDocument {
 	combinedDocument := bsonx.BsonEmpty()
 	for _, sort := range p.projections {
-		sortDocument := sort.ToBsonDocument()
+		sortDocument := sort.Pro()
 		for _, key := range sortDocument.Keys() {
+			combinedDocument.Remove(key)
 			combinedDocument.Append(key, sortDocument.GetValue(key))
 		}
 	}
 	return combinedDocument
 }
 
-func (p FieldsProjection) Document() bson.D {
-	return p.ToBsonDocument().Document()
-}
-
-type ElemMatchFilterProjection struct {
+type elemMatchFilterProjection struct {
 	fieldName string
 	filter    bsonx.Bson
 }
 
-func NewElemMatchFilterProjection(fieldName string, filter bsonx.Bson) ElemMatchFilterProjection {
-	return ElemMatchFilterProjection{
+func newElemMatchFilterProjection(fieldName string, filter bsonx.Bson) elemMatchFilterProjection {
+	return elemMatchFilterProjection{
 		filter:    filter,
 		fieldName: fieldName,
 	}
 }
 
-func (p ElemMatchFilterProjection) ToBsonDocument() *bsonx.BsonDocument {
-	return bsonx.BsonDoc(p.fieldName, bsonx.BsonDoc("$elemMatch", p.filter.ToBsonDocument()))
+func (p elemMatchFilterProjection) Pro() *bsonx.BsonDocument {
+	return bsonx.BsonDoc(p.fieldName, bsonx.BsonDoc("$elemMatch", p.filter.Pro()))
 }
 
-func (p ElemMatchFilterProjection) Document() bson.D {
-	return p.ToBsonDocument().Document()
+func (p elemMatchFilterProjection) Document() bson.D {
+	return p.Pro().Document()
 }

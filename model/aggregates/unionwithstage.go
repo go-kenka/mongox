@@ -22,7 +22,7 @@ type unionWithStage struct {
 }
 
 func (f unionWithStage) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewUnionWithStage(collection string, pipeline ...bsonx.Bson) unionWithStage {
@@ -32,14 +32,14 @@ func NewUnionWithStage(collection string, pipeline ...bsonx.Bson) unionWithStage
 	}
 }
 
-func (f unionWithStage) ToBsonDocument() *bsonx.BsonDocument {
+func (f unionWithStage) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonEmpty()
 	data.Append("coll", bsonx.String(f.collection))
 
 	pipeline := bsonx.Array()
 	for _, s := range f.pipeline {
-		pipeline.Append(s.ToBsonDocument())
+		pipeline.Append(s.Pro())
 	}
 	data.Append("pipeline", pipeline)
 
@@ -48,5 +48,5 @@ func (f unionWithStage) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f unionWithStage) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

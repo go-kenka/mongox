@@ -29,7 +29,7 @@ func BsonDoc(key string, value IBsonValue) *BsonDocument {
 	}
 }
 
-func (d *BsonDocument) ToBsonDocument() *BsonDocument {
+func (d *BsonDocument) Pro() *BsonDocument {
 	return d
 }
 

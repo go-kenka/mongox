@@ -10,7 +10,7 @@ type bitwiseFilter struct {
 }
 
 func (f bitwiseFilter) Value() bsonx.IBsonValue {
-	return f.filter.ToBsonDocument()
+	return f.filter.Pro()
 }
 
 func (f bitwiseFilter) Document() bson.D {

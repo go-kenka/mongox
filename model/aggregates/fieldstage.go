@@ -55,7 +55,7 @@ type fieldsStage[T expression.AnyExpression] struct {
 }
 
 func (f fieldsStage[T]) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewFieldsStage[T expression.AnyExpression](stageName string, fields []Field[T]) fieldsStage[T] {
@@ -65,7 +65,7 @@ func NewFieldsStage[T expression.AnyExpression](stageName string, fields []Field
 	}
 }
 
-func (f fieldsStage[T]) ToBsonDocument() *bsonx.BsonDocument {
+func (f fieldsStage[T]) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonEmpty()
 	for _, field := range f.fields {
@@ -76,5 +76,5 @@ func (f fieldsStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f fieldsStage[T]) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

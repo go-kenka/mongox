@@ -37,7 +37,7 @@ type facetStage struct {
 }
 
 func (bs facetStage) Bson() bsonx.Bson {
-	return bs.ToBsonDocument()
+	return bs.Pro()
 }
 
 func NewFacetStage(facets []Facet) facetStage {
@@ -46,7 +46,7 @@ func NewFacetStage(facets []Facet) facetStage {
 	}
 }
 
-func (bs facetStage) ToBsonDocument() *bsonx.BsonDocument {
+func (bs facetStage) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonEmpty()
 
@@ -54,7 +54,7 @@ func (bs facetStage) ToBsonDocument() *bsonx.BsonDocument {
 		for _, f := range bs.facets {
 			pipeline := bsonx.Array()
 			for _, p := range f.pipeline {
-				pipeline.Append(p.Bson().ToBsonDocument())
+				pipeline.Append(p.Bson().Pro())
 			}
 
 			data.Append(f.name, pipeline)
@@ -65,5 +65,5 @@ func (bs facetStage) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (bs facetStage) Document() bson.D {
-	return bs.ToBsonDocument().Document()
+	return bs.Pro().Document()
 }

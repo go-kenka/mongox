@@ -5,10 +5,12 @@ import (
 	"github.com/go-kenka/mongox/internal/expression"
 	"github.com/go-kenka/mongox/internal/options"
 	"github.com/go-kenka/mongox/model/filters"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Stage interface {
 	Bson() bsonx.Bson
+	Document() bson.D
 }
 
 type stage struct {
@@ -21,6 +23,10 @@ func NewStage(doc *bsonx.BsonDocument) stage {
 
 func (s stage) Bson() bsonx.Bson {
 	return s.doc
+}
+
+func (s stage) Document() bson.D {
+	return s.doc.Document()
 }
 
 // Count Passes a document to the next stage that contains a count of the number of

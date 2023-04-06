@@ -27,10 +27,10 @@ func (s SearchCount) Of(count bsonx.Bson) SearchCount {
 	return s
 }
 
-func (s SearchCount) ToBsonDocument() *bsonx.BsonDocument {
+func (s SearchCount) Pro() *bsonx.BsonDocument {
 	return bsonx.BsonEmpty()
 }
 
 func (s SearchCount) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }

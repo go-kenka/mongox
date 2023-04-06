@@ -24,7 +24,7 @@ type geoNearStage struct {
 }
 
 func (f geoNearStage) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewGeoNearStage(
@@ -39,14 +39,14 @@ func NewGeoNearStage(
 	}
 }
 
-func (f geoNearStage) ToBsonDocument() *bsonx.BsonDocument {
+func (f geoNearStage) Pro() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 
 	geoNear := bsonx.BsonEmpty()
 	geoNear.Append("near", f.near.Encode())
 	geoNear.Append("distanceField", bsonx.String(f.distanceField))
 
-	for _, v := range f.options.ToBsonDocument().Data() {
+	for _, v := range f.options.Pro().Data() {
 		geoNear.Append(v.Key, v.Value)
 	}
 
@@ -55,5 +55,5 @@ func (f geoNearStage) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f geoNearStage) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

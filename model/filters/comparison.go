@@ -11,7 +11,7 @@ type comparisonFilter struct {
 }
 
 func (f comparisonFilter) Value() bsonx.IBsonValue {
-	return f.filter.ToBsonDocument()
+	return f.filter.Pro()
 }
 
 func (f comparisonFilter) Document() bson.D {

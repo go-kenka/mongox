@@ -10,7 +10,7 @@ type emptyFilter struct {
 }
 
 func (f emptyFilter) Value() bsonx.IBsonValue {
-	return f.filter.ToBsonDocument()
+	return f.filter.Pro()
 }
 
 func (f emptyFilter) Document() bson.D {

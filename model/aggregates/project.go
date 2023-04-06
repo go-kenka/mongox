@@ -2,12 +2,10 @@ package aggregates
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/model/projections"
 )
 
-type ProjectStage interface {
-	Stage
-}
+type ProjectStage Stage
 
 // Project Passes along the documents with the requested fields to the next stage in the
 // pipeline. The specified fields can be existing fields from the input
@@ -16,6 +14,6 @@ type ProjectStage interface {
 // document that can specify the inclusion of fields, the suppression of the _id
 // field, the addition of new fields, and the resetting of the values of
 // existing fields. Alternatively, you may specify the exclusion of fields.
-func Project[T expression.DocumentExpression](projection T) ProjectStage {
-	return NewStage(bsonx.BsonDoc("$project", projection))
+func Project(projection projections.Projections) ProjectStage {
+	return NewStage(bsonx.BsonDoc("$project", projection.Pro()))
 }

@@ -61,7 +61,7 @@ type mergeStage struct {
 }
 
 func (f mergeStage) Bson() bsonx.Bson {
-	return f.ToBsonDocument()
+	return f.Pro()
 }
 
 func NewMergeStage(intoValue bsonx.IBsonValue, options options.MergeOptions) mergeStage {
@@ -71,7 +71,7 @@ func NewMergeStage(intoValue bsonx.IBsonValue, options options.MergeOptions) mer
 	}
 }
 
-func (f mergeStage) ToBsonDocument() *bsonx.BsonDocument {
+func (f mergeStage) Pro() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonEmpty()
 	if f.intoValue.IsString() {
@@ -123,5 +123,5 @@ func (f mergeStage) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (f mergeStage) Document() bson.D {
-	return f.ToBsonDocument().Document()
+	return f.Pro().Document()
 }

@@ -33,10 +33,10 @@ func NewCompoundSort(sorts ...bsonx.Bson) CompoundSort {
 	return CompoundSort{sorts: sorts}
 }
 
-func (s CompoundSort) ToBsonDocument() *bsonx.BsonDocument {
+func (s CompoundSort) Pro() *bsonx.BsonDocument {
 	combinedDocument := bsonx.BsonEmpty()
 	for _, sort := range s.sorts {
-		sortDocument := sort.ToBsonDocument()
+		sortDocument := sort.Pro()
 		for _, key := range sortDocument.Keys() {
 			combinedDocument.Append(key, sortDocument.GetValue(key))
 		}
@@ -45,5 +45,5 @@ func (s CompoundSort) ToBsonDocument() *bsonx.BsonDocument {
 }
 
 func (s CompoundSort) Document() bson.D {
-	return s.ToBsonDocument().Document()
+	return s.Pro().Document()
 }
