@@ -10,10 +10,11 @@ import (
 
 type Filter interface {
 	Value() bsonx.IBsonValue
+	Document() bson.D
 }
 
 type MatchFilter interface {
-	Value() bsonx.IBsonValue
+	Filter
 	logicalFilter | comparisonFilter | arrayFilter | bitwiseFilter | elementFilter | evaluationFilter | emptyFilter
 }
 

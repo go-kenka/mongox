@@ -2,6 +2,7 @@ package filters
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type elementFilter struct {
@@ -10,6 +11,10 @@ type elementFilter struct {
 
 func (f elementFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f elementFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 // Exists When <boolean> is true, $exists matches the documents that contain the

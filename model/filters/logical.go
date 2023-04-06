@@ -2,6 +2,7 @@ package filters
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type logicalFilter struct {
@@ -10,6 +11,10 @@ type logicalFilter struct {
 
 func (f logicalFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f logicalFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 // And Joins query clauses with a logical AND returns all documents that match the

@@ -3,6 +3,7 @@ package filters
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/model/geojson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type geoFilter struct {
@@ -11,6 +12,10 @@ type geoFilter struct {
 
 func (f geoFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f geoFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 // GeoWithin Selects documents with geospatial data that exists entirely within a specified shape.

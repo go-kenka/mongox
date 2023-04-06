@@ -2,6 +2,7 @@ package filters
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type bitwiseFilter struct {
@@ -10,6 +11,10 @@ type bitwiseFilter struct {
 
 func (f bitwiseFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f bitwiseFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 // BitsAllClear $bitsAllClear matches documents where all of the bit positions

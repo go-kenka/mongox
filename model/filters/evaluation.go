@@ -4,6 +4,7 @@ import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
 	"github.com/go-kenka/mongox/internal/options"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -13,6 +14,10 @@ type evaluationFilter struct {
 
 func (f evaluationFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f evaluationFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 // Expr Allows the use of aggregation expressions within the query language.
@@ -75,6 +80,10 @@ type whereFilter struct {
 
 func (f whereFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f whereFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 // Where Use the $where operator to pass either a string containing a JavaScript

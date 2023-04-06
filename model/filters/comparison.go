@@ -3,6 +3,7 @@ package filters
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type comparisonFilter struct {
@@ -11,6 +12,10 @@ type comparisonFilter struct {
 
 func (f comparisonFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f comparisonFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 // Eq Matches values that are equal to a specified value.

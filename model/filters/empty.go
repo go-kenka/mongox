@@ -1,6 +1,9 @@
 package filters
 
-import "github.com/go-kenka/mongox/bsonx"
+import (
+	"github.com/go-kenka/mongox/bsonx"
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 type emptyFilter struct {
 	filter bsonx.Bson
@@ -8,6 +11,10 @@ type emptyFilter struct {
 
 func (f emptyFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
+}
+
+func (f emptyFilter) Document() bson.D {
+	return f.filter.Document()
 }
 
 func Empty() emptyFilter {
