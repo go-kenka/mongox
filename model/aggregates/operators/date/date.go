@@ -4,7 +4,6 @@ package date
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
-	"github.com/go-kenka/mongox/internal/filter"
 	"github.com/go-kenka/mongox/model/aggregates"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -38,7 +37,7 @@ func DateAdd[T expression.DateExpression, N expression.NumberExpression](startDa
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateAdd", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateAdd", doc)}
 }
 
 // DateDiff NewStage in version 5.0.
@@ -67,7 +66,7 @@ func DateDiff[T expression.DateExpression, N expression.NumberExpression](startD
 	if options.startOfWeek != "" {
 		doc.Append("startOfWeek", bsonx.String(options.startOfWeek.String()))
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateDiff", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateDiff", doc)}
 }
 
 // DateFromParts Constructs and returns a Date object given the date's constituent properties.
@@ -104,7 +103,7 @@ func DateFromParts(year int32, options DateFromPartsOptions) dateOperator {
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateFromParts", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateFromParts", doc)}
 }
 
 // DateFromPartsIso Constructs and returns a Date object given the date's constituent properties.
@@ -140,7 +139,7 @@ func DateFromPartsIso(isoWeekYear int32, options DateFromPartsOptions) dateOpera
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateFromParts", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateFromParts", doc)}
 }
 
 // DateFromString Converts a date/time string to a date object.
@@ -168,7 +167,7 @@ func DateFromString(dateString string, options DateFromStringOptions) dateOperat
 	if options.onNull != nil {
 		doc.Append("onNull", options.onNull.ToBsonDocument())
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateFromString", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateFromString", doc)}
 }
 
 // DateSubtract NewStage in version 5.0.
@@ -192,7 +191,7 @@ func DateSubtract[T expression.DateExpression, N expression.NumberExpression](st
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateSubtract", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateSubtract", doc)}
 }
 
 // DateToParts Returns a document that contains the constituent parts of a given BSON Date value as individual properties. The properties returned are year, month, day, hour, minute, second and millisecond.
@@ -214,7 +213,7 @@ func DateToParts[T expression.DateExpression](date T, options DateToPartsOptions
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateSubtract", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateSubtract", doc)}
 }
 
 type DateToStringOptions struct {
@@ -243,7 +242,7 @@ func DateToString[T expression.DateExpression](date T, options DateToStringOptio
 	if options.onNull != nil {
 		doc.Append("onNull", options.onNull.ToBsonDocument())
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateToString", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateToString", doc)}
 }
 
 // DateTrunc NewStage in version 5.0.
@@ -271,7 +270,7 @@ func DateTrunc[T expression.DateExpression](date T, unit aggregates.MongoTimeUni
 	if options.startOfWeek != "" {
 		doc.Append("startOfWeek", bsonx.String(options.startOfWeek.String()))
 	}
-	return dateOperator{doc: filter.NewSimpleFilter("$dateTrunc", doc)}
+	return dateOperator{doc: aggregates.NewSimpleFilter("$dateTrunc", doc)}
 }
 
 // DayOfMonth Returns the day of the month for a date as a number between 1 and 31.

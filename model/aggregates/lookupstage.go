@@ -107,7 +107,7 @@ func (bs lookupStage[T]) ToBsonDocument() *bsonx.BsonDocument {
 	}
 
 	if len(bs.pipeline) > 0 {
-		var pipeline bsonx.BsonArray
+		pipeline := bsonx.Array()
 		for _, p := range bs.pipeline {
 			pipeline.Append(p.ToBsonDocument())
 		}

@@ -328,7 +328,7 @@ func (a AbstractFunctionAndWindow) Document() bson.D {
 	return a.ToBsonDocument().Document()
 }
 
-func (a AbstractFunctionAndWindow) writeWindow(doc bsonx.BsonDocument) {
+func (a AbstractFunctionAndWindow) writeWindow(doc *bsonx.BsonDocument) {
 	if a.window != nil {
 		doc.Append("window", a.window.ToBsonDocument())
 	}

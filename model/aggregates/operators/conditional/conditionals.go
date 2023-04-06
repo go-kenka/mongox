@@ -4,7 +4,7 @@ package conditional
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
-	"github.com/go-kenka/mongox/internal/filter"
+	"github.com/go-kenka/mongox/model/aggregates"
 )
 
 type conditionalOperator struct {
@@ -26,7 +26,7 @@ func (o conditionalOperator) Exp() bsonx.IBsonValue {
 // $cond evaluates and returns the value of the <false-case> expression.
 // The arguments can be any valid expression.
 func Cond[T expression.AnyExpression](fieldName string, ifExpr T, thenExpr, elseExpr T) conditionalOperator {
-	return conditionalOperator{doc: filter.NewSimpleFilter(fieldName, bsonx.BsonDoc("$cond", bsonx.BsonDoc("if", ifExpr).
+	return conditionalOperator{doc: aggregates.NewSimpleFilter(fieldName, bsonx.BsonDoc("$cond", bsonx.BsonDoc("if", ifExpr).
 		Append("then", thenExpr).
 		Append("else", elseExpr)))}
 }
@@ -62,7 +62,7 @@ func IfNull[T expression.AnyExpression](fieldName string, es []T, replace T) con
 		data.Append(e)
 	}
 	data.Append(replace)
-	return conditionalOperator{doc: filter.NewSimpleFilter(fieldName, bsonx.BsonDoc("$ifNull", data))}
+	return conditionalOperator{doc: aggregates.NewSimpleFilter(fieldName, bsonx.BsonDoc("$ifNull", data))}
 }
 
 type Branch[T expression.AnyExpression] struct {
@@ -90,5 +90,5 @@ func Switch[T expression.AnyExpression](fieldName string, branches []Branch[T], 
 	}
 	data := bsonx.BsonDoc("branches", bs)
 	data.Append("default", defaultExpr)
-	return conditionalOperator{doc: filter.NewSimpleFilter(fieldName, bsonx.BsonDoc("$switch", data))}
+	return conditionalOperator{doc: aggregates.NewSimpleFilter(fieldName, bsonx.BsonDoc("$switch", data))}
 }

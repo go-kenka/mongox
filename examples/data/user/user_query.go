@@ -14,8 +14,14 @@ type UserQuery struct {
 	cc *mongo.Collection
 }
 
+func test() {
+	q := UserQuery{cc: nil}
+
+	q.Find(context.TODO(), filters.Eq("aaa", bsonx.String("000")))
+}
+
 func (q UserQuery) Find(ctx context.Context, filter filters.Filter, opts ...*options.FindOptions) (result []*UserData, err error) {
-	cur, err := q.cc.Find(ctx, filter.Document(), opts...)
+	cur, err := q.cc.Find(ctx, filter.Exp(), opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +35,7 @@ func (q UserQuery) Find(ctx context.Context, filter filters.Filter, opts ...*opt
 }
 
 func (q UserQuery) FindOne(ctx context.Context, filter filters.Filter, opts ...*options.FindOneOptions) (result *UserData, err error) {
-	err = q.cc.FindOne(ctx, filter.Document(), opts...).Decode(&result)
+	err = q.cc.FindOne(ctx, filter.Exp(), opts...).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +43,7 @@ func (q UserQuery) FindOne(ctx context.Context, filter filters.Filter, opts ...*
 }
 
 func (q UserQuery) FindOneAndReplace(ctx context.Context, filter filters.Filter, replacement bsonx.Bson, opts ...*options.FindOneAndReplaceOptions) (result *UserData, err error) {
-	err = q.cc.FindOneAndReplace(ctx, filter.Document(), replacement.Document(), opts...).Decode(&result)
+	err = q.cc.FindOneAndReplace(ctx, filter.Exp(), replacement.Document(), opts...).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +51,7 @@ func (q UserQuery) FindOneAndReplace(ctx context.Context, filter filters.Filter,
 }
 
 func (q UserQuery) FindOneAndUpdate(ctx context.Context, filter filters.Filter, update bsonx.Bson, opts ...*options.FindOneAndUpdateOptions) (result *UserData, err error) {
-	err = q.cc.FindOneAndUpdate(ctx, filter.Document(), update.Document(), opts...).Decode(&result)
+	err = q.cc.FindOneAndUpdate(ctx, filter.Exp(), update.Document(), opts...).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +59,7 @@ func (q UserQuery) FindOneAndUpdate(ctx context.Context, filter filters.Filter, 
 }
 
 func (q UserQuery) FindOneAndDelete(ctx context.Context, filter filters.Filter, opts ...*options.FindOneAndDeleteOptions) (result *UserData, err error) {
-	err = q.cc.FindOneAndDelete(ctx, filter.Document(), opts...).Decode(&result)
+	err = q.cc.FindOneAndDelete(ctx, filter.Exp(), opts...).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +67,7 @@ func (q UserQuery) FindOneAndDelete(ctx context.Context, filter filters.Filter, 
 }
 
 func (q UserQuery) CountDocuments(ctx context.Context, filter filters.Filter, opts ...*options.CountOptions) (int64, error) {
-	return q.cc.CountDocuments(ctx, filter.Document(), opts...)
+	return q.cc.CountDocuments(ctx, filter.Exp(), opts...)
 }
 
 func (q UserQuery) EstimatedDocumentCount(ctx context.Context, opts ...*options.EstimatedDocumentCountOptions) (int64, error) {
@@ -69,7 +75,7 @@ func (q UserQuery) EstimatedDocumentCount(ctx context.Context, opts ...*options.
 }
 
 func (q UserQuery) Distinct(ctx context.Context, fieldName string, filter filters.Filter, opts ...*options.DistinctOptions) ([]interface{}, error) {
-	return q.cc.Distinct(ctx, fieldName, filter.Document(), opts...)
+	return q.cc.Distinct(ctx, fieldName, filter.Exp(), opts...)
 }
 
 type UserAggregate struct {

@@ -3,6 +3,7 @@ package aggregates
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -45,7 +46,7 @@ func GraphLookup[T expression.AnyExpression](
 	connectFromField string,
 	connectToField string,
 	as string,
-	options GraphLookupOptions,
+	options options.GraphLookupOptions,
 ) GraphLookupStage {
 	return NewGraphLookupStage(from, startWith, connectFromField, connectToField, as, options)
 }
@@ -56,7 +57,7 @@ type graphLookupStage[T expression.AnyExpression] struct {
 	connectFromField string
 	connectToField   string
 	as               string
-	options          GraphLookupOptions
+	options          options.GraphLookupOptions
 }
 
 func (bs graphLookupStage[T]) Bson() bsonx.Bson {
@@ -69,7 +70,7 @@ func NewGraphLookupStage[T expression.AnyExpression](
 	connectFromField string,
 	connectToField string,
 	as string,
-	options GraphLookupOptions,
+	options options.GraphLookupOptions,
 ) graphLookupStage[T] {
 	return graphLookupStage[T]{
 		from:             from,

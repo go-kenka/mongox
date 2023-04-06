@@ -2,14 +2,13 @@ package filters
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/internal/filter"
 )
 
 type elementFilter struct {
 	filter bsonx.Bson
 }
 
-func (f elementFilter) Exp() bsonx.IBsonValue {
+func (f elementFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
 }
 
@@ -19,7 +18,7 @@ func (f elementFilter) Exp() bsonx.IBsonValue {
 // [1] MongoDB $exists does not correspond to SQL operator exists. For SQL
 // exists, refer to the $in operator.
 func Exists(fieldName string, value bool) elementFilter {
-	return elementFilter{filter: filter.NewOperatorFilter("$exists", fieldName, bsonx.Boolean(value))}
+	return elementFilter{filter: newOperatorFilter("$exists", fieldName, bsonx.Boolean(value))}
 }
 
 // Type selects documents where the value of the field is an instance of the
@@ -33,5 +32,5 @@ func Exists(fieldName string, value bool) elementFilter {
 // listed types. The types specified in the array can be either numeric or
 // string aliases.
 func Type(fieldName string, value bsonx.BsonType) elementFilter {
-	return elementFilter{filter: filter.NewOperatorFilter("$type", fieldName, bsonx.Int32(value.Value()))}
+	return elementFilter{filter: newOperatorFilter("$type", fieldName, bsonx.Int32(value.Value()))}
 }

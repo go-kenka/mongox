@@ -2,14 +2,13 @@ package filters
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/internal/filter"
 )
 
 type bitwiseFilter struct {
 	filter bsonx.Bson
 }
 
-func (f bitwiseFilter) Exp() bsonx.IBsonValue {
+func (f bitwiseFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
 }
 
@@ -20,7 +19,7 @@ func (f bitwiseFilter) Exp() bsonx.IBsonValue {
 // value must be either numeric or a BinData instance. Otherwise, $bitsAllClear
 // will not match the current document.
 func BitsAllClear(fieldName string, bitmask int64) bitwiseFilter {
-	return bitwiseFilter{filter: filter.NewOperatorFilter("$bitsAllClear", fieldName, bsonx.Int64(bitmask))}
+	return bitwiseFilter{filter: newOperatorFilter("$bitsAllClear", fieldName, bsonx.Int64(bitmask))}
 }
 
 // BitsAllSet $bitsAllSet matches documents where all of the bit positions given by the
@@ -30,7 +29,7 @@ func BitsAllClear(fieldName string, bitmask int64) bitwiseFilter {
 // either numeric or a BinData instance. Otherwise, $bitsAllSet will not match
 // the current document.
 func BitsAllSet(fieldName string, bitmask int64) bitwiseFilter {
-	return bitwiseFilter{filter: filter.NewOperatorFilter("$bitsAllSet", fieldName, bsonx.Int64(bitmask))}
+	return bitwiseFilter{filter: newOperatorFilter("$bitsAllSet", fieldName, bsonx.Int64(bitmask))}
 }
 
 // BitsAnyClear $bitsAnyClear matches documents where any of the bit positions given by the
@@ -40,7 +39,7 @@ func BitsAllSet(fieldName string, bitmask int64) bitwiseFilter {
 // either numeric or a BinData instance. Otherwise, $bitsAnyClear will not match
 // the current document.
 func BitsAnyClear(fieldName string, bitmask int64) bitwiseFilter {
-	return bitwiseFilter{filter: filter.NewOperatorFilter("$bitsAnyClear", fieldName, bsonx.Int64(bitmask))}
+	return bitwiseFilter{filter: newOperatorFilter("$bitsAnyClear", fieldName, bsonx.Int64(bitmask))}
 }
 
 // BitsAnySet $bitsAnySet matches documents where any of the bit positions given
@@ -50,5 +49,5 @@ func BitsAnyClear(fieldName string, bitmask int64) bitwiseFilter {
 // either numeric or a BinData instance. Otherwise, $bitsAnySet will not match
 // the current document.
 func BitsAnySet(fieldName string, bitmask int64) bitwiseFilter {
-	return bitwiseFilter{filter: filter.NewOperatorFilter("$bitsAnySet", fieldName, bsonx.Int64(bitmask))}
+	return bitwiseFilter{filter: newOperatorFilter("$bitsAnySet", fieldName, bsonx.Int64(bitmask))}
 }

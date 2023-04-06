@@ -3,6 +3,7 @@ package aggregates
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -32,21 +33,21 @@ type BucketAutoStage Stage
 //	     granularity: <string>
 //	 }
 //	}
-func BucketAuto[T expression.AnyExpression](groupBy T, buckets int32, options BucketAutoOptions) BucketAutoStage {
+func BucketAuto[T expression.AnyExpression](groupBy T, buckets int32, options options.BucketAutoOptions) BucketAutoStage {
 	return NewBucketAutoStage(groupBy, buckets, options)
 }
 
 type bucketAutoStage[T expression.AnyExpression] struct {
 	groupBy T
 	buckets int32
-	options BucketAutoOptions
+	options options.BucketAutoOptions
 }
 
 func (bs bucketAutoStage[T]) Bson() bsonx.Bson {
 	return bs.ToBsonDocument()
 }
 
-func NewBucketAutoStage[T expression.AnyExpression](groupBy T, buckets int32, options BucketAutoOptions) bucketAutoStage[T] {
+func NewBucketAutoStage[T expression.AnyExpression](groupBy T, buckets int32, options options.BucketAutoOptions) bucketAutoStage[T] {
 	return bucketAutoStage[T]{
 		groupBy: groupBy,
 		buckets: buckets,

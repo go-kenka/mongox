@@ -157,7 +157,7 @@ func (f notFilter[T]) Document() bson.D {
 	return f.ToBsonDocument().Document()
 }
 
-func (f notFilter[T]) createFilter(fieldName string, value bsonx.IBsonValue) bsonx.BsonDocument {
+func (f notFilter[T]) createFilter(fieldName string, value bsonx.IBsonValue) *bsonx.BsonDocument {
 	if strings.HasPrefix(fieldName, "$") {
 		return bsonx.BsonDoc("$not", bsonx.BsonDoc(fieldName, value))
 	}
@@ -167,7 +167,7 @@ func (f notFilter[T]) createFilter(fieldName string, value bsonx.IBsonValue) bso
 	return bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$not", bsonx.BsonDoc("$eq", value)))
 }
 
-func (f notFilter[T]) containsOperator(value bsonx.BsonDocument) bool {
+func (f notFilter[T]) containsOperator(value *bsonx.BsonDocument) bool {
 	keys := value.Keys()
 	if equals(keys, DBREFKeys) || equals(keys, DBREFKeysWithDb) {
 		return false

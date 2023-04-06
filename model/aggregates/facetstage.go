@@ -52,7 +52,7 @@ func (bs facetStage) ToBsonDocument() *bsonx.BsonDocument {
 
 	if len(bs.facets) > 0 {
 		for _, f := range bs.facets {
-			var pipeline bsonx.BsonArray
+			pipeline := bsonx.Array()
 			for _, p := range f.pipeline {
 				pipeline.Append(p.Bson().ToBsonDocument())
 			}

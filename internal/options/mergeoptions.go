@@ -1,7 +1,8 @@
-package aggregates
+package options
 
 import (
 	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/model/aggregates"
 )
 
 type WhenMatched uint8
@@ -45,7 +46,27 @@ var (
 type MergeOptions struct {
 	uniqueIdentifier    []string
 	whenMatched         WhenMatched
-	variables           []Variable[expression.AnyExpression]
+	variables           []aggregates.Variable[expression.AnyExpression]
 	whenMatchedPipeline []bool
 	whenNotMatched      WhenNotMatched
+}
+
+func (o MergeOptions) UniqueIdentifier() []string {
+	return o.uniqueIdentifier
+}
+
+func (o MergeOptions) WhenMatched() WhenMatched {
+	return o.whenMatched
+}
+
+func (o MergeOptions) Variables() []aggregates.Variable[expression.AnyExpression] {
+	return o.variables
+}
+
+func (o MergeOptions) WhenMatchedPipeline() []bool {
+	return o.whenMatchedPipeline
+}
+
+func (o MergeOptions) WhenNotMatched() WhenNotMatched {
+	return o.whenNotMatched
 }

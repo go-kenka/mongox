@@ -1,4 +1,4 @@
-package aggregates
+package options
 
 import (
 	"github.com/go-kenka/mongox/bsonx"

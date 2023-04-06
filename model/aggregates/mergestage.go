@@ -2,6 +2,7 @@ package aggregates
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -26,7 +27,7 @@ type MergeStage Stage
 // Can output to a sharded collection. Input collection can also be sharded. For
 // a comparison with the $out stage which also outputs the aggregation results
 // to a collection, see $merge and $out Comparison.
-func Merge(collectionName string, options MergeOptions) MergeStage {
+func Merge(collectionName string, options options.MergeOptions) MergeStage {
 	return NewMergeStage(bsonx.String(collectionName), options)
 }
 
@@ -49,21 +50,21 @@ func Merge(collectionName string, options MergeOptions) MergeStage {
 // Can output to a sharded collection. Input collection can also be sharded. For
 // a comparison with the $out stage which also outputs the aggregation results
 // to a collection, see $merge and $out Comparison.
-func MergeWithNameSpace(namespace MongoNamespace, options MergeOptions) MergeStage {
+func MergeWithNameSpace(namespace MongoNamespace, options options.MergeOptions) MergeStage {
 	return NewMergeStage(bsonx.BsonDoc("db", bsonx.String(namespace.databaseName)).
 		Append("coll", bsonx.String(namespace.collectionName)), options)
 }
 
 type mergeStage struct {
 	intoValue bsonx.IBsonValue
-	options   MergeOptions
+	options   options.MergeOptions
 }
 
 func (f mergeStage) Bson() bsonx.Bson {
 	return f.ToBsonDocument()
 }
 
-func NewMergeStage(intoValue bsonx.IBsonValue, options MergeOptions) mergeStage {
+func NewMergeStage(intoValue bsonx.IBsonValue, options options.MergeOptions) mergeStage {
 	return mergeStage{
 		intoValue: intoValue,
 		options:   options,
@@ -82,39 +83,39 @@ func (f mergeStage) ToBsonDocument() *bsonx.BsonDocument {
 		data.Append("into", into)
 	}
 
-	if len(f.options.uniqueIdentifier) > 0 {
-		if len(f.options.uniqueIdentifier) == 1 {
-			data.Append("on", bsonx.String(f.options.uniqueIdentifier[0]))
+	if len(f.options.UniqueIdentifier()) > 0 {
+		if len(f.options.UniqueIdentifier()) == 1 {
+			data.Append("on", bsonx.String(f.options.UniqueIdentifier()[0]))
 		} else {
-			var uniqueIdentifier bsonx.BsonArray
-			for _, s := range f.options.uniqueIdentifier {
+			uniqueIdentifier := bsonx.Array()
+			for _, s := range f.options.UniqueIdentifier() {
 				uniqueIdentifier.Append(bsonx.String(s))
 			}
 			data.Append("on", uniqueIdentifier)
 		}
 	}
-	if len(f.options.variables) > 0 {
+	if len(f.options.Variables()) > 0 {
 		variables := bsonx.BsonEmpty()
-		for _, s := range f.options.variables {
+		for _, s := range f.options.Variables() {
 			variables.Append(s.GetName(), s.GetValue())
 		}
 		data.Append("let", variables)
 	}
 
-	if f.options.whenMatched != WhenMatchedInvalid {
-		switch f.options.whenMatched {
-		case WhenMatchedReplace, WhenMatchedKeepExisting, WhenMatchedMerge, WhenMatchedFail:
-			data.Append("whenMatched", bsonx.String(WhenMatcheds[f.options.whenMatched]))
-		case WhenMatchedPipeline:
+	if f.options.WhenMatched() != options.WhenMatchedInvalid {
+		switch f.options.WhenMatched() {
+		case options.WhenMatchedReplace, options.WhenMatchedKeepExisting, options.WhenMatchedMerge, options.WhenMatchedFail:
+			data.Append("whenMatched", bsonx.String(options.WhenMatcheds[f.options.WhenMatched()]))
+		case options.WhenMatchedPipeline:
 			pipe := bsonx.Array()
-			for _, m := range f.options.whenMatchedPipeline {
+			for _, m := range f.options.WhenMatchedPipeline() {
 				pipe.Append(bsonx.Boolean(m))
 			}
 			data.Append("whenMatched", pipe)
 		}
 	}
-	if f.options.whenNotMatched != WhenNotMatchedInvalid {
-		data.Append("whenNotMatched", bsonx.String(WhenNotMatcheds[f.options.whenNotMatched]))
+	if f.options.WhenNotMatched() != options.WhenNotMatchedInvalid {
+		data.Append("whenNotMatched", bsonx.String(options.WhenNotMatcheds[f.options.WhenNotMatched()]))
 	}
 
 	b.Append("$merge", data)

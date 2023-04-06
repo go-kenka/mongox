@@ -3,13 +3,13 @@ package date
 type StartOfWeek string
 
 const (
-	monday    StartOfWeek = "monday"
-	tuesday   StartOfWeek = "tuesday"
-	wednesday StartOfWeek = "wednesday"
-	thursday  StartOfWeek = "thursday"
-	friday    StartOfWeek = "friday"
-	saturday  StartOfWeek = "saturday"
-	sunday    StartOfWeek = "sunday"
+	Monday    StartOfWeek = "monday"
+	Tuesday   StartOfWeek = "tuesday"
+	Wednesday StartOfWeek = "wednesday"
+	Thursday  StartOfWeek = "thursday"
+	Friday    StartOfWeek = "friday"
+	Saturday  StartOfWeek = "saturday"
+	Sunday    StartOfWeek = "sunday"
 )
 
 func (w StartOfWeek) String() string {

@@ -3,7 +3,7 @@ package filters
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
-	"github.com/go-kenka/mongox/internal/filter"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -11,14 +11,14 @@ type evaluationFilter struct {
 	filter bsonx.Bson
 }
 
-func (f evaluationFilter) Exp() bsonx.IBsonValue {
+func (f evaluationFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
 }
 
 // Expr Allows the use of aggregation expressions within the query language.
 // $expr has the following syntax: { $expr: { <expression> } }
 func Expr[I expression.AnyExpression](expression I) evaluationFilter {
-	return evaluationFilter{filter: filter.NewSimpleEncodingFilter("$expr", expression)}
+	return evaluationFilter{filter: newSimpleEncodingFilter("$expr", expression)}
 }
 
 // JsonSchema The $jsonSchema operator matches documents that satisfy the
@@ -27,7 +27,7 @@ func Expr[I expression.AnyExpression](expression I) evaluationFilter {
 // formatted according to draft 4 of the JSON Schema standard { <keyword1>:
 // <value1>, ... }
 func JsonSchema(schema bsonx.Bson) evaluationFilter {
-	return evaluationFilter{filter: filter.NewSimpleEncodingFilter("$jsonSchema", schema.ToBsonDocument())}
+	return evaluationFilter{filter: newSimpleEncodingFilter("$jsonSchema", schema.ToBsonDocument())}
 }
 
 // Mod Select documents where the value of a field divided by a divisor has the
@@ -35,7 +35,7 @@ func JsonSchema(schema bsonx.Bson) evaluationFilter {
 // specify a $mod expression, use the following syntax: { field: { $mod: [
 // divisor, remainder ] } }
 func Mod(fieldName string, divisor, remainder int64) evaluationFilter {
-	return evaluationFilter{filter: filter.NewOperatorFilter("$mod", fieldName, bsonx.Array(bsonx.Int64(divisor), bsonx.Int64(remainder)))}
+	return evaluationFilter{filter: newOperatorFilter("$mod", fieldName, bsonx.Array(bsonx.Int64(divisor), bsonx.Int64(remainder)))}
 }
 
 // Regex Provides regular expression capabilities for pattern matching strings in
@@ -47,7 +47,7 @@ func Mod(fieldName string, divisor, remainder int64) evaluationFilter {
 // objects (i.e. /pattern/) to specify regular expressions: { <field>:
 // /pattern/<options> }
 func Regex(fieldName string, pattern, options string) evaluationFilter {
-	return evaluationFilter{filter: filter.NewSimpleFilter(fieldName, bsonx.RegularExpression(primitive.Regex{
+	return evaluationFilter{filter: newSimpleFilter(fieldName, bsonx.RegularExpression(primitive.Regex{
 		Pattern: pattern,
 		Options: options,
 	}))}
@@ -65,8 +65,16 @@ func Regex(fieldName string, pattern, options string) evaluationFilter {
 //	     $diacriticSensitive: <boolean>
 //	   }
 //	}
-func Text(search string, textSearchOptions filter.TextSearchOptions) evaluationFilter {
-	return evaluationFilter{filter: filter.NewTextFilter(search, textSearchOptions)}
+func Text(search string, textSearchOptions options.TextSearchOptions) evaluationFilter {
+	return evaluationFilter{filter: newTextFilter(search, textSearchOptions)}
+}
+
+type whereFilter struct {
+	filter bsonx.Bson
+}
+
+func (f whereFilter) Value() bsonx.IBsonValue {
+	return f.filter.ToBsonDocument()
 }
 
 // Where Use the $where operator to pass either a string containing a JavaScript
@@ -75,6 +83,6 @@ func Text(search string, textSearchOptions filter.TextSearchOptions) evaluationF
 // JavaScript expression or function for each document in the collection.
 // Reference the document in the JavaScript expression or function using either
 // this or obj . { $where: <string|JavaScript Code> }
-func Where(javaScriptExpression string) evaluationFilter {
-	return evaluationFilter{filter: bsonx.BsonDoc("$where", bsonx.String(javaScriptExpression))}
+func Where(javaScriptExpression string) whereFilter {
+	return whereFilter{filter: bsonx.BsonDoc("$where", bsonx.String(javaScriptExpression))}
 }

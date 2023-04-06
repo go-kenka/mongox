@@ -3,6 +3,7 @@ package aggregates
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -14,21 +15,21 @@ type BucketStage Stage
 // inclusive lower bound of the bucket. The output option specifies the fields
 // included in each output document. $bucket only produces output documents for
 // buckets that contain at least one input document.
-func Bucket[T expression.AnyExpression, B expression.NumberExpression](groupBy T, boundaries []B, options AggBucketOptions) BucketStage {
+func Bucket[T expression.AnyExpression, B expression.NumberExpression](groupBy T, boundaries []B, options options.AggBucketOptions) BucketStage {
 	return NewBucketStage(groupBy, boundaries, options)
 }
 
 type bucketStage[T expression.AnyExpression, B expression.NumberExpression] struct {
 	groupBy    T
 	boundaries []B
-	options    AggBucketOptions
+	options    options.AggBucketOptions
 }
 
 func (bs bucketStage[T, B]) Bson() bsonx.Bson {
 	return bs.ToBsonDocument()
 }
 
-func NewBucketStage[T expression.AnyExpression, B expression.NumberExpression](groupBy T, boundaries []B, options AggBucketOptions) bucketStage[T, B] {
+func NewBucketStage[T expression.AnyExpression, B expression.NumberExpression](groupBy T, boundaries []B, options options.AggBucketOptions) bucketStage[T, B] {
 	return bucketStage[T, B]{
 		groupBy:    groupBy,
 		boundaries: boundaries,
@@ -40,7 +41,7 @@ func (bs bucketStage[T, B]) ToBsonDocument() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("groupBy", bs.groupBy)
 
-	var boundaries bsonx.BsonArray
+	boundaries := bsonx.Array()
 	for _, boundary := range bs.boundaries {
 		boundaries.Append(boundary)
 	}

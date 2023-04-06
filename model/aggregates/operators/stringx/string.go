@@ -1,5 +1,5 @@
 // Package strings String expressions, with the exception of $concat, only have a well-defined behavior for strings of ASCII characters.
-package strings
+package stringx
 
 import (
 	"github.com/go-kenka/mongox/bsonx"

@@ -37,7 +37,7 @@ func (f unionWithStage) ToBsonDocument() *bsonx.BsonDocument {
 	data := bsonx.BsonEmpty()
 	data.Append("coll", bsonx.String(f.collection))
 
-	var pipeline bsonx.BsonArray
+	pipeline := bsonx.Array()
 	for _, s := range f.pipeline {
 		pipeline.Append(s.ToBsonDocument())
 	}

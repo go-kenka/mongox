@@ -3,6 +3,7 @@ package aggregates
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/options"
 	"github.com/go-kenka/mongox/model/filters"
 )
 
@@ -11,10 +12,10 @@ type Stage interface {
 }
 
 type stage struct {
-	doc bsonx.BsonDocument
+	doc *bsonx.BsonDocument
 }
 
-func NewStage(doc bsonx.BsonDocument) stage {
+func NewStage(doc *bsonx.BsonDocument) stage {
 	return stage{doc: doc}
 }
 
@@ -46,8 +47,8 @@ func Limit(limit int64) Stage {
 // read operation query syntax; i.e. $match does not accept raw aggregation
 // expressions. Instead, use a $expr query expression to include aggregation
 // expression in $match.
-func Match(filter filters.MatchFilter) Stage {
-	return NewStage(bsonx.BsonDoc("$match", filter.ToBsonDocument()))
+func Match[T filters.MatchFilter](filter T) Stage {
+	return NewStage(bsonx.BsonDoc("$match", filter.Value()))
 }
 
 // Out Takes the documents returned by the aggregation pipeline and writes them to a
@@ -109,7 +110,7 @@ func Sort[T expression.DocumentExpression](sort T) Stage {
 //	     preserveNullAndEmptyArrays: <boolean>
 //	   }
 //	}
-func Unwind(fieldName string, unwindOptions *UnwindOptions) Stage {
+func Unwind(fieldName string, unwindOptions *options.UnwindOptions) Stage {
 	if unwindOptions == nil {
 		return NewStage(bsonx.BsonDoc("$unwind", bsonx.String(fieldName)))
 	}

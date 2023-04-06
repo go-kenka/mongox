@@ -1,4 +1,4 @@
-package filter
+package options
 
 type TextSearchOptions struct {
 	language           *string

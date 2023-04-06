@@ -1,15 +1,16 @@
-package aggregates
+package options
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"github.com/go-kenka/mongox/model/aggregates"
 )
 
 type BucketAutoOptions struct {
 	output      []bsonx.BsonField
-	granularity BucketGranularity
+	granularity aggregates.BucketGranularity
 }
 
-func (b BucketAutoOptions) Granularity(granularity BucketGranularity) BucketAutoOptions {
+func (b BucketAutoOptions) Granularity(granularity aggregates.BucketGranularity) BucketAutoOptions {
 	b.granularity = granularity
 	return b
 }

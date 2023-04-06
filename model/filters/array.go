@@ -3,14 +3,13 @@ package filters
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
-	"github.com/go-kenka/mongox/internal/filter"
 )
 
 type arrayFilter struct {
 	filter bsonx.Bson
 }
 
-func (f arrayFilter) Exp() bsonx.IBsonValue {
+func (f arrayFilter) Value() bsonx.IBsonValue {
 	return f.filter.ToBsonDocument()
 }
 
@@ -19,7 +18,7 @@ func (f arrayFilter) Exp() bsonx.IBsonValue {
 // expression, use the following prototype: { <field>: { $all: [ <value1> ,
 // <value2> ... ] } }
 func All[I expression.AnyExpression](fieldName string, values ...I) arrayFilter {
-	return arrayFilter{filter: filter.NewIterableOperatorFilter(fieldName, "$all", values)}
+	return arrayFilter{filter: newIterableOperatorFilter(fieldName, "$all", values)}
 }
 
 // ElemMatch The $elemMatch operator matches documents that contain an array field with at
@@ -44,5 +43,5 @@ func ElemMatch(fieldName string, filter bsonx.Bson) arrayFilter {
 // cannot use indexes for the $size portion of a query, although the other
 // portions of a query can use indexes if applicable.
 func Size(fieldName string, size int32) arrayFilter {
-	return arrayFilter{filter: filter.NewOperatorFilter("$size", fieldName, bsonx.Int32(size))}
+	return arrayFilter{filter: newOperatorFilter("$size", fieldName, bsonx.Int32(size))}
 }
