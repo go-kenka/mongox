@@ -33,8 +33,8 @@ func (a FillConstructibleBsonElement) newWithMutatedValue(d bsonx.Document) Fill
 	return a.newSelf(a.baseElement, a.appendedElementValue.newMutated(d))
 }
 
-func (a FillConstructibleBsonElement) Pro() *bsonx.BsonDocument {
-	baseDoc := a.baseElement.Pro()
+func (a FillConstructibleBsonElement) BsonDocument() *bsonx.BsonDocument {
+	baseDoc := a.baseElement.BsonDocument()
 	if baseDoc.Size() != 1 {
 		panic(fmt.Errorf("baseElement must contain exactly one element, but contains %d", baseDoc.Size()))
 	}
@@ -52,7 +52,7 @@ func (a FillConstructibleBsonElement) Pro() *bsonx.BsonDocument {
 		}
 		baseElementValueDoc = v.AsDocument()
 	}
-	appendedElementValueDoc := a.appendedElementValue.Pro()
+	appendedElementValueDoc := a.appendedElementValue.BsonDocument()
 	if appendedElementValueDoc.IsEmpty() {
 		return baseDoc
 	}
@@ -60,5 +60,5 @@ func (a FillConstructibleBsonElement) Pro() *bsonx.BsonDocument {
 }
 
 func (a FillConstructibleBsonElement) Document() bson.D {
-	return a.Pro().Document()
+	return a.BsonDocument().Document()
 }

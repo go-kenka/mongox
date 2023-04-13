@@ -5,24 +5,30 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type UnionWithStage Stage
+type UnionWithStage struct {
+	stage bsonx.Bson
+}
 
-// UnionWith NewStage in version 4.4.
+func (s UnionWithStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s UnionWithStage) Document() bson.D {
+	return s.stage.Document()
+}
+
+// UnionWith NewDefaultStage in version 4.4.
 // Performs a union of two collections.
 // $unionWith
-// combines pipeline results from two collections into a single result set. The stage outputs the combined result set (including duplicates) to the next stage.
+// combines pipeline results from two collections into a single result set. The DefaultStage outputs the combined result set (including duplicates) to the next DefaultStage.
 // The order in which the combined result set documents are output is unspecified.
 func UnionWith(collection string, pipeline ...bsonx.Bson) UnionWithStage {
-	return NewUnionWithStage(collection, pipeline...)
+	return UnionWithStage{stage: NewUnionWithStage(collection, pipeline...)}
 }
 
 type unionWithStage struct {
 	collection string
 	pipeline   []bsonx.Bson
-}
-
-func (f unionWithStage) Bson() bsonx.Bson {
-	return f.Pro()
 }
 
 func NewUnionWithStage(collection string, pipeline ...bsonx.Bson) unionWithStage {
@@ -32,14 +38,14 @@ func NewUnionWithStage(collection string, pipeline ...bsonx.Bson) unionWithStage
 	}
 }
 
-func (f unionWithStage) Pro() *bsonx.BsonDocument {
+func (f unionWithStage) BsonDocument() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonEmpty()
 	data.Append("coll", bsonx.String(f.collection))
 
 	pipeline := bsonx.Array()
 	for _, s := range f.pipeline {
-		pipeline.Append(s.Pro())
+		pipeline.Append(s.BsonDocument())
 	}
 	data.Append("pipeline", pipeline)
 
@@ -48,5 +54,5 @@ func (f unionWithStage) Pro() *bsonx.BsonDocument {
 }
 
 func (f unionWithStage) Document() bson.D {
-	return f.Pro().Document()
+	return f.BsonDocument().Document()
 }

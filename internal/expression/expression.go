@@ -148,8 +148,3 @@ type BinaryExpression interface {
 	bsonx.IBsonValue
 	Binary
 }
-
-//
-// type IntExpression[I IntExpression] interface {
-//	Int() I
-// }

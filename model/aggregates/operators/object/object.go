@@ -11,7 +11,7 @@ type objectOperator struct {
 }
 
 func (o objectOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // MergeObjects Combines multiple documents into a single document.

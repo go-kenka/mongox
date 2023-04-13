@@ -16,7 +16,7 @@ type fields struct {
 }
 
 func (p fields) Pro() *bsonx.BsonDocument {
-	return p.doc.Pro()
+	return p.doc.BsonDocument()
 }
 
 func Computed[E expression.AnyExpression](fieldName string, expression E) fields {
@@ -113,10 +113,10 @@ func newElemMatchFilterProjection(fieldName string, filter bsonx.Bson) elemMatch
 	}
 }
 
-func (p elemMatchFilterProjection) Pro() *bsonx.BsonDocument {
-	return bsonx.BsonDoc(p.fieldName, bsonx.BsonDoc("$elemMatch", p.filter.Pro()))
+func (p elemMatchFilterProjection) BsonDocument() *bsonx.BsonDocument {
+	return bsonx.BsonDoc(p.fieldName, bsonx.BsonDoc("$elemMatch", p.filter.BsonDocument()))
 }
 
 func (p elemMatchFilterProjection) Document() bson.D {
-	return p.Pro().Document()
+	return p.BsonDocument().Document()
 }

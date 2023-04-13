@@ -11,7 +11,7 @@ type geoFilter struct {
 }
 
 func (f geoFilter) Value() bsonx.IBsonValue {
-	return f.filter.Pro()
+	return f.filter.BsonDocument()
 }
 
 func (f geoFilter) Document() bson.D {
@@ -33,7 +33,7 @@ func GeoWithin(fieldName string, geometry geojson.IGeometry) geoFilter {
 // operator uses the $geometry operator to specify the GeoJSON object.
 func GeoWithinBson(fieldName string, geometry bsonx.Bson) geoFilter {
 	return geoFilter{filter: newGeometryOperatorFilter("$geoWithin", fieldName,
-		geometry.Pro(), 0, 0)}
+		geometry.BsonDocument(), 0, 0)}
 }
 
 // GeoWithinBox $geoWithin The available shape operators are $box
@@ -97,7 +97,7 @@ func GeoIntersects(fieldName string, geometry geojson.IGeometry) geoFilter {
 // default coordinate reference system (CRS),
 func GeoIntersectsBson(fieldName string, geometry bsonx.Bson) geoFilter {
 	return geoFilter{filter: newGeometryOperatorFilter("$geoIntersects", fieldName,
-		geometry.Pro(), 0, 0)}
+		geometry.BsonDocument(), 0, 0)}
 }
 
 // Near Specifies a point for which a geospatial query returns the documents
@@ -111,7 +111,7 @@ func Near(fieldName string, geometry geojson.Point, maxDistance, minDistance flo
 // from nearest to farthest. The $near operator can specify either a GeoJSON
 // point or legacy coordinate point.
 func NearBson(fieldName string, geometry bsonx.Bson, maxDistance, minDistance float64) geoFilter {
-	return geoFilter{filter: newGeometryOperatorFilter("$near", fieldName, geometry.Pro(), maxDistance, minDistance)}
+	return geoFilter{filter: newGeometryOperatorFilter("$near", fieldName, geometry.BsonDocument(), maxDistance, minDistance)}
 }
 
 // NearCoordinate Specifies a point for which a geospatial query returns the documents
@@ -132,7 +132,7 @@ func NearSphere(fieldName string, geometry geojson.Point, maxDistance, minDistan
 // documents from nearest to farthest. MongoDB calculates distances for
 // $nearSphere using spherical geometry.
 func NearSphereBson(fieldName string, geometry bsonx.Bson, maxDistance, minDistance float64) geoFilter {
-	return geoFilter{filter: newGeometryOperatorFilter("$nearSphere", fieldName, geometry.Pro(), maxDistance, minDistance)}
+	return geoFilter{filter: newGeometryOperatorFilter("$nearSphere", fieldName, geometry.BsonDocument(), maxDistance, minDistance)}
 }
 
 // NearSphereCoordinate Specifies a point for which a geospatial query returns the

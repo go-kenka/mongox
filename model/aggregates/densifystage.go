@@ -6,12 +6,22 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type DensifyStage Stage
+type DensifyStage struct {
+	stage bsonx.Bson
+}
 
-// Densify NewStage in version 5.1. Creates new documents in a sequence of documents
+func (s DensifyStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s DensifyStage) Document() bson.D {
+	return s.stage.Document()
+}
+
+// Densify NewDefaultStage in version 5.1. Creates new documents in a sequence of documents
 // where certain values in a field are missing. You can use $densify to: Fill
 // gaps in time series data. Add missing values between groups of data. Populate
-// your data with a specified range of values. The $densify stage has this
+// your data with a specified range of values. The $densify DefaultStage has this
 // syntax:
 //
 //	{
@@ -26,17 +36,13 @@ type DensifyStage Stage
 //	  }
 //	}
 func Densify(field string, dRange densify.DensifyRange) DensifyStage {
-	return NewDensifyStage(field, dRange, densify.DefaultDensifyOptions)
+	return DensifyStage{stage: NewDensifyStage(field, dRange, densify.DefaultDensifyOptions)}
 }
 
 type densifyStage struct {
 	field        string
 	densifyRange densify.DensifyRange
 	options      densify.DensifyOptions
-}
-
-func (f densifyStage) Bson() bsonx.Bson {
-	return f.Pro()
 }
 
 func NewDensifyStage(
@@ -51,12 +57,12 @@ func NewDensifyStage(
 	}
 }
 
-func (f densifyStage) Pro() *bsonx.BsonDocument {
+func (f densifyStage) BsonDocument() *bsonx.BsonDocument {
 	doc := bsonx.BsonDoc("field", bsonx.String(f.field))
-	doc.Append("range", f.densifyRange.Pro())
-	return bsonx.NewMerged(doc, f.options.Pro())
+	doc.Append("range", f.densifyRange.BsonDocument())
+	return bsonx.NewMerged(doc, f.options.BsonDocument())
 }
 
 func (f densifyStage) Document() bson.D {
-	return f.Pro().Document()
+	return f.BsonDocument().Document()
 }

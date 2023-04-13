@@ -7,7 +7,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type BucketStage Stage
+type BucketStage struct {
+	stage bsonx.Bson
+}
+
+func (s BucketStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s BucketStage) Document() bson.D {
+	return s.stage.Document()
+}
 
 // Bucket Categorizes incoming documents into groups, called buckets, based on a
 // specified expression and bucket boundaries and outputs a document per each
@@ -16,17 +26,13 @@ type BucketStage Stage
 // included in each output document. $bucket only produces output documents for
 // buckets that contain at least one input document.
 func Bucket[T expression.AnyExpression, B expression.NumberExpression](groupBy T, boundaries []B, options options.AggBucketOptions) BucketStage {
-	return NewBucketStage(groupBy, boundaries, options)
+	return BucketStage{stage: NewBucketStage(groupBy, boundaries, options)}
 }
 
 type bucketStage[T expression.AnyExpression, B expression.NumberExpression] struct {
 	groupBy    T
 	boundaries []B
 	options    options.AggBucketOptions
-}
-
-func (bs bucketStage[T, B]) Bson() bsonx.Bson {
-	return bs.Pro()
 }
 
 func NewBucketStage[T expression.AnyExpression, B expression.NumberExpression](groupBy T, boundaries []B, options options.AggBucketOptions) bucketStage[T, B] {
@@ -37,7 +43,7 @@ func NewBucketStage[T expression.AnyExpression, B expression.NumberExpression](g
 	}
 }
 
-func (bs bucketStage[T, B]) Pro() *bsonx.BsonDocument {
+func (bs bucketStage[T, B]) BsonDocument() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("groupBy", bs.groupBy)
 
@@ -58,7 +64,7 @@ func (bs bucketStage[T, B]) Pro() *bsonx.BsonDocument {
 	if len(output) > 0 {
 		out := bsonx.BsonEmpty()
 		for _, field := range output {
-			out.Append(field.GetName(), field.GetValue().Pro())
+			out.Append(field.GetName(), field.GetValue().BsonDocument())
 		}
 		data.Append("output", out)
 	}
@@ -67,5 +73,5 @@ func (bs bucketStage[T, B]) Pro() *bsonx.BsonDocument {
 	return b
 }
 func (bs bucketStage[T, B]) Document() bson.D {
-	return bs.Pro().Document()
+	return bs.BsonDocument().Document()
 }

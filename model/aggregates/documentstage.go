@@ -5,21 +5,29 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type DocumentsStage Stage
+type DocumentsStage struct {
+	stage bsonx.Bson
+}
+
+func (s DocumentsStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s DocumentsStage) Document() bson.D {
+	return s.stage.Document()
+}
+func (s DocumentsStage) Database() {
+}
 
 // Documents Changed in version 5.1. Returns literal documents from input values. The
-// $documents stage has the following form:
+// $documents DefaultStage has the following form:
 // { $documents: <expression> }
 func Documents(documents []bsonx.Bson) DocumentsStage {
-	return NewDocumentsStage(documents)
+	return DocumentsStage{stage: NewDocumentsStage(documents)}
 }
 
 type documentsStage struct {
 	documents []bsonx.Bson
-}
-
-func (f documentsStage) Bson() bsonx.Bson {
-	return f.Pro()
 }
 
 func NewDocumentsStage(documents []bsonx.Bson) documentsStage {
@@ -28,11 +36,11 @@ func NewDocumentsStage(documents []bsonx.Bson) documentsStage {
 	}
 }
 
-func (f documentsStage) Pro() *bsonx.BsonDocument {
+func (f documentsStage) BsonDocument() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	documents := bsonx.Array()
 	for _, value := range f.documents {
-		documents.Append(value.Pro())
+		documents.Append(value.BsonDocument())
 	}
 
 	doc.Append("$documents", documents)
@@ -40,5 +48,5 @@ func (f documentsStage) Pro() *bsonx.BsonDocument {
 }
 
 func (f documentsStage) Document() bson.D {
-	return f.Pro().Document()
+	return f.BsonDocument().Document()
 }

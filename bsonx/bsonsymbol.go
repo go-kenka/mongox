@@ -13,6 +13,10 @@ func Symbol(data primitive.Symbol) *BsonSymbol {
 	}
 }
 
+func (a *BsonSymbol) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonSymbol) GetBsonType() BsonType {
 	return SYMBOL
 }

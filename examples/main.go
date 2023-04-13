@@ -2,11 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
-	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/model/filters"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -26,39 +23,31 @@ func main() {
 		}
 	}()
 
-	coll := client.Database("data_factory").Collection("movies")
+	// m := data.NewClient(client)
+	//
+	// m.WithTransaction(context.TODO(), func(sessCtx mongo.SessionContext) (interface{}, error) {
+	// 	m.User.Update().UpdateOne(sessCtx, nil, nil)
+	// 	return nil, nil
+	// })
 
-	// doc := bsonx.BsonDoc("user", bsonx.BsonDoc("id", bsonx.String("01")).
-	// 	Append("name", bsonx.String("xiaowu")).
-	// 	Append("avatar", bsonx.String("https://www.mongodb.com/")).
-	// 	Append("sex", bsonx.Boolean(true)),
-	// ).Append("profile", bsonx.String("hhhhhh"))
-	// doc := bsonx.BsonDoc("user", bsonx.BsonDoc("id", bsonx.String("03")).
-	// 	Append("name", bsonx.String("xiaowu2")).
-	// 	Append("avatar", bsonx.String("https://www.mongodb.com/")).
-	// 	Append("sex", bsonx.Boolean(true)),
-	// )
+	data := map[string]interface{}{
+		"min":       primitive.MinKey{},
+		"max":       primitive.MaxKey{},
+		"null":      primitive.Null{},
+		"undefined": primitive.Undefined{},
+		"timestamp": primitive.Timestamp{},
+		"DBPointer": primitive.DBPointer{
+			DB:      "aaa",
+			Pointer: primitive.NewObjectID(),
+		},
+		"CodeWithScope": primitive.CodeWithScope{
+			Code:  "aaa",
+			Scope: map[string]interface{}{},
+		},
+	}
 
-	doc := filters.And(
-		filters.Eq("user", bsonx.BsonDoc("id", bsonx.String("02")).
-			Append("name", bsonx.String("xiaowu1")).
-			Append("avatar", bsonx.String("https://www.mongodb.com/")).
-			Append("sex", bsonx.Boolean(true)),
-		),
-	)
-
-	data := doc.Exp().AsDocument().Document()
-
-	query, _ := json.Marshal(data)
-
-	fmt.Println(string(query))
-
-	var user map[string]any
-
-	err = coll.FindOne(context.TODO(), data).Decode(&user)
+	_, err = client.Database("data_factory").Collection("logs").InsertOne(context.TODO(), data)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(user)
 }

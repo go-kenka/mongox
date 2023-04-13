@@ -11,7 +11,7 @@ type stringOperator struct {
 }
 
 func (o stringOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // Concat Concatenates strings and returns the concatenated string. $concat has

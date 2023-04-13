@@ -13,6 +13,10 @@ func JavaScriptWithScope(data primitive.CodeWithScope) *BsonJavaScriptWithScope 
 	}
 }
 
+func (a *BsonJavaScriptWithScope) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonJavaScriptWithScope) GetBsonType() BsonType {
 	return JAVASCRIPT_WITH_SCOPE
 }

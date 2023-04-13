@@ -6,11 +6,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type SearchStage Stage
+type SearchStage struct {
+	stage bsonx.Bson
+}
 
-// Search The $search stage performs a full-text search on the specified field or
+func (s SearchStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s SearchStage) Document() bson.D {
+	return s.stage.Document()
+}
+
+// Search The $search DefaultStage performs a full-text search on the specified field or
 // fields which must be covered by an Atlas Search index. $search A $search
-// pipeline stage has the following prototype form:
+// pipeline DefaultStage has the following prototype form:
 //
 //	{
 //	 $search: {
@@ -28,12 +38,12 @@ type SearchStage Stage
 //	 }
 //	}
 func Search(operator search.SearchOperator, options search.SearchOptions) SearchStage {
-	return NewSearchStage("$search", operator, options)
+	return SearchStage{stage: NewSearchStage("$search", operator, options)}
 }
 
-// SearchWithCollector The $search stage performs a full-text search on the specified field or
+// SearchWithCollector The $search DefaultStage performs a full-text search on the specified field or
 // fields which must be covered by an Atlas Search index. $search A $search
-// pipeline stage has the following prototype form:
+// pipeline DefaultStage has the following prototype form:
 //
 //	{
 //	 $search: {
@@ -51,11 +61,11 @@ func Search(operator search.SearchOperator, options search.SearchOptions) Search
 //	 }
 //	}
 func SearchWithCollector(collector search.SearchCollector, options search.SearchOptions) SearchStage {
-	return NewSearchStage("$search", collector, options)
+	return SearchStage{stage: NewSearchStage("$search", collector, options)}
 }
 
-// SearchMeta The $searchMeta stage returns different types of metadata result documents.
-// $searchMeta A $searchMeta pipeline stage has the following prototype form:
+// SearchMeta The $searchMeta DefaultStage returns different types of metadata result documents.
+// $searchMeta A $searchMeta pipeline DefaultStage has the following prototype form:
 //
 //	{
 //	 $searchMeta: {
@@ -69,11 +79,11 @@ func SearchWithCollector(collector search.SearchCollector, options search.Search
 //	 }
 //	}
 func SearchMeta(operator search.SearchOperator, options search.SearchOptions) SearchStage {
-	return NewSearchStage("$searchMeta", operator, options)
+	return SearchStage{stage: NewSearchStage("$searchMeta", operator, options)}
 }
 
-// SearchMetaWithCollector The $searchMeta stage returns different types of metadata result documents.
-// $searchMeta A $searchMeta pipeline stage has the following prototype form:
+// SearchMetaWithCollector The $searchMeta DefaultStage returns different types of metadata result documents.
+// $searchMeta A $searchMeta pipeline DefaultStage has the following prototype form:
 //
 //	{
 //	 $searchMeta: {
@@ -87,7 +97,7 @@ func SearchMeta(operator search.SearchOperator, options search.SearchOptions) Se
 //	 }
 //	}
 func SearchMetaWithCollector(collector search.SearchCollector, options search.SearchOptions) SearchStage {
-	return NewSearchStage("$searchMeta", collector, options)
+	return SearchStage{stage: NewSearchStage("$searchMeta", collector, options)}
 }
 
 // searchStage TODO: SearchStage未完成
@@ -95,10 +105,6 @@ type searchStage struct {
 	name                string
 	operatorOrCollector bsonx.Bson
 	options             search.SearchOptions
-}
-
-func (f searchStage) Bson() bsonx.Bson {
-	return f.Pro()
 }
 
 func NewSearchStage(
@@ -113,10 +119,10 @@ func NewSearchStage(
 	}
 }
 
-func (f searchStage) Pro() *bsonx.BsonDocument {
+func (f searchStage) BsonDocument() *bsonx.BsonDocument {
 	return bsonx.BsonEmpty()
 }
 
 func (f searchStage) Document() bson.D {
-	return f.Pro().Document()
+	return f.BsonDocument().Document()
 }

@@ -7,6 +7,10 @@ type BsonMaxKey struct {
 	data primitive.MaxKey
 }
 
+func (a *BsonMaxKey) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonMaxKey) GetBsonType() BsonType {
 	return MAX_KEY
 }

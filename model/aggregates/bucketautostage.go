@@ -7,7 +7,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type BucketAutoStage Stage
+type BucketAutoStage struct {
+	stage bsonx.Bson
+}
+
+func (s BucketAutoStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s BucketAutoStage) Document() bson.D {
+	return s.stage.Document()
+}
 
 // BucketAuto Categorizes incoming documents into a specific number of groups, called
 // buckets, based on a specified expression. Bucket boundaries are automatically
@@ -19,7 +29,7 @@ type BucketAutoStage Stage
 // bucket. This bound is exclusive for all buckets except the final bucket in
 // the series, where it is inclusive. A count field that contains the number of
 // documents in the bucket. The count field is included by default when the
-// output document is not specified. The $bucketAuto stage has the following
+// output document is not specified. The $bucketAuto DefaultStage has the following
 // form:
 //
 //	{
@@ -34,17 +44,15 @@ type BucketAutoStage Stage
 //	 }
 //	}
 func BucketAuto[T expression.AnyExpression](groupBy T, buckets int32, options options.BucketAutoOptions) BucketAutoStage {
-	return NewBucketAutoStage(groupBy, buckets, options)
+	return BucketAutoStage{
+		stage: NewBucketAutoStage(groupBy, buckets, options),
+	}
 }
 
 type bucketAutoStage[T expression.AnyExpression] struct {
 	groupBy T
 	buckets int32
 	options options.BucketAutoOptions
-}
-
-func (bs bucketAutoStage[T]) Bson() bsonx.Bson {
-	return bs.Pro()
 }
 
 func NewBucketAutoStage[T expression.AnyExpression](groupBy T, buckets int32, options options.BucketAutoOptions) bucketAutoStage[T] {
@@ -55,7 +63,7 @@ func NewBucketAutoStage[T expression.AnyExpression](groupBy T, buckets int32, op
 	}
 }
 
-func (bs bucketAutoStage[T]) Pro() *bsonx.BsonDocument {
+func (bs bucketAutoStage[T]) BsonDocument() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("groupBy", bs.groupBy)
 
@@ -66,7 +74,7 @@ func (bs bucketAutoStage[T]) Pro() *bsonx.BsonDocument {
 	if len(output) > 0 {
 		out := bsonx.BsonEmpty()
 		for _, field := range output {
-			out.Append(field.GetName(), field.GetValue().Pro())
+			out.Append(field.GetName(), field.GetValue().BsonDocument())
 		}
 		data.Append("output", out)
 	}
@@ -80,5 +88,5 @@ func (bs bucketAutoStage[T]) Pro() *bsonx.BsonDocument {
 	return b
 }
 func (bs bucketAutoStage[T]) Document() bson.D {
-	return bs.Pro().Document()
+	return bs.BsonDocument().Document()
 }

@@ -17,12 +17,12 @@ func NewSimpleFilter(fieldName string, value bsonx.IBsonValue) simpleFilter {
 	}
 }
 
-func (s simpleFilter) Pro() *bsonx.BsonDocument {
+func (s simpleFilter) BsonDocument() *bsonx.BsonDocument {
 	return bsonx.BsonDoc(s.fieldName, s.value)
 }
 
 func (s simpleFilter) Document() bson.D {
-	return s.Pro().Document()
+	return s.BsonDocument().Document()
 }
 
 type operatorFilter[T bsonx.Expression] struct {
@@ -39,12 +39,12 @@ func NewOperatorFilter[T bsonx.Expression](operatorName string, fieldName string
 	}
 }
 
-func (s operatorFilter[T]) Pro() *bsonx.BsonDocument {
+func (s operatorFilter[T]) BsonDocument() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	operator := bsonx.BsonDoc(s.operatorName, s.value)
 	doc.Append(s.fieldName, operator)
 	return doc
 }
 func (s operatorFilter[T]) Document() bson.D {
-	return s.Pro().Document()
+	return s.BsonDocument().Document()
 }

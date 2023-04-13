@@ -10,7 +10,7 @@ type logicalFilter struct {
 }
 
 func (f logicalFilter) Value() bsonx.IBsonValue {
-	return f.filter.Pro()
+	return f.filter.BsonDocument()
 }
 
 func (f logicalFilter) Document() bson.D {

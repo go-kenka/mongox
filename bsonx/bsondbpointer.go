@@ -13,6 +13,10 @@ func DbPointer(data primitive.DBPointer) *BsonDBPointer {
 	}
 }
 
+func (a *BsonDBPointer) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonDBPointer) GetBsonType() BsonType {
 	return DB_POINTER
 }

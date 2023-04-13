@@ -12,7 +12,7 @@ type conditionalOperator struct {
 }
 
 func (o conditionalOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // Cond Evaluates a boolean expression to return one of the two specified return expressions.

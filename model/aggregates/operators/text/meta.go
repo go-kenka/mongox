@@ -10,7 +10,7 @@ type textOperator struct {
 }
 
 func (o textOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // Meta Returns the metadata associated with a document, e.g. "textScore" when

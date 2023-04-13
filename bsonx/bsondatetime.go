@@ -13,6 +13,10 @@ func DateTime(data primitive.DateTime) *BsonDateTime {
 	}
 }
 
+func (a *BsonDateTime) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonDateTime) GetBsonType() BsonType {
 	return DATE_TIME
 }

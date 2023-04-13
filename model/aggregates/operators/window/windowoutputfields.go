@@ -12,7 +12,7 @@ type outputOperator struct {
 }
 
 func (o outputOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // AddToSet Returns an array of all unique values that results from applying an
@@ -29,17 +29,17 @@ func Avg[T expression.AnyExpression](path string, e T, window Window) outputOper
 }
 
 // Bottom Returns the bottom element within a group according to the specified
-// sort order. NewStage in version 5.2. Available in $group and $setWindowFields
+// sort order. NewDefaultStage in version 5.2. Available in $group and $setWindowFields
 // stages.
 func Bottom[O expression.AnyExpression](path string, sortBy bsonx.Bson, out O, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
-	args[SortBy] = sortBy.Pro()
+	args[SortBy] = sortBy.BsonDocument()
 	args[Output] = out
 	return compoundParameterWindowFunction(path, "$bottom", args, window)
 }
 
 // BottomN Returns an aggregation of the bottom n fields within a group,
-// according to the specified sort order. NewStage in version 5.2. Available in $group
+// according to the specified sort order. NewDefaultStage in version 5.2. Available in $group
 // and $setWindowFields stages.
 func BottomN[I expression.AnyExpression, O expression.AnyExpression, N expression.IntExpression](path string, in I, out O, n N, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
@@ -50,13 +50,13 @@ func BottomN[I expression.AnyExpression, O expression.AnyExpression, N expressio
 }
 
 // Count Returns the number of documents in the group or window. Distinct from
-// the $count pipeline stage. NewStage in version 5.0.
+// the $count pipeline stage. NewDefaultStage in version 5.0.
 func Count(path string, window Window) outputOperator {
 	return simpleParameterWindowFunction(path, "$count", nil, window)
 }
 
 // CovariancePop Returns the population covariance of two numeric expressions.
-// NewStage in version 5.0.
+// NewDefaultStage in version 5.0.
 func CovariancePop[T expression.AnyExpression](path string, expr1, expr2 T, window Window) outputOperator {
 	args := bsonx.Array()
 	args.Append(expr1)
@@ -64,7 +64,7 @@ func CovariancePop[T expression.AnyExpression](path string, expr1, expr2 T, wind
 	return simpleParameterWindowFunction(path, "$covariancePop", args, window)
 }
 
-// CovarianceSamp Returns the sample covariance of two numeric expressions. NewStage
+// CovarianceSamp Returns the sample covariance of two numeric expressions. NewDefaultStage
 // in version 5.0.
 func CovarianceSamp[T expression.AnyExpression](path string, expr1, expr2 T, window Window) outputOperator {
 	args := bsonx.Array()
@@ -75,12 +75,12 @@ func CovarianceSamp[T expression.AnyExpression](path string, expr1, expr2 T, win
 
 // DenseRank Returns the document position (known as the rank) relative to other
 // documents in the $setWindowFields stage partition. There are no gaps in the
-// ranks. Ties receive the same rank. NewStage in version 5.0.
+// ranks. Ties receive the same rank. NewDefaultStage in version 5.0.
 func DenseRank(path string) outputOperator {
 	return simpleParameterWindowFunction(path, "$denseRank", nil, nil)
 }
 
-// Derivative Returns the average rate of change within the specified window. NewStage
+// Derivative Returns the average rate of change within the specified window. NewDefaultStage
 // in version 5.0.
 func Derivative[I expression.AnyExpression](path string, in I, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
@@ -88,7 +88,7 @@ func Derivative[I expression.AnyExpression](path string, in I, window Window) ou
 	return compoundParameterWindowFunction(path, "$derivative", args, window)
 }
 
-// TimeDerivative Returns the average rate of change within the specified window. NewStage
+// TimeDerivative Returns the average rate of change within the specified window. NewDefaultStage
 // in version 5.0.
 func TimeDerivative[T expression.AnyExpression](path string, e T, window Window, unit aggregates.MongoTimeUnit) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
@@ -99,13 +99,13 @@ func TimeDerivative[T expression.AnyExpression](path string, e T, window Window,
 
 // DocumentNumber Returns the position of a document (known as the document number) in the
 // $setWindowFields stage partition. Ties result in different adjacent document
-// numbers. NewStage in version 5.0.
+// numbers. NewDefaultStage in version 5.0.
 func DocumentNumber(path string) outputOperator {
 	return simpleParameterWindowFunction(path, "$documentNumber", nil, nil)
 }
 
 // ExpMovingAvg Returns the exponential moving average for the numeric
-// expression. NewStage in version 5.0.
+// expression. NewDefaultStage in version 5.0.
 func ExpMovingAvg[T expression.AnyExpression](path string, e T, n int32) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
 	args[Input] = e
@@ -114,7 +114,7 @@ func ExpMovingAvg[T expression.AnyExpression](path string, e T, n int32) outputO
 }
 
 // ExpMovingAvgAlpha Returns the exponential moving average for the numeric
-// expression. NewStage in version 5.0.
+// expression. NewDefaultStage in version 5.0.
 func ExpMovingAvgAlpha[T expression.AnyExpression](path string, e T, alpha float64) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
 	args[Input] = e
@@ -130,7 +130,7 @@ func First[T expression.AnyExpression](path string, e T, window Window) outputOp
 }
 
 // Integral Returns the approximation of the area under a curve.
-// NewStage in version 5.0.
+// NewDefaultStage in version 5.0.
 func Integral[T expression.AnyExpression](path string, e T, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
 	args[Input] = e
@@ -138,7 +138,7 @@ func Integral[T expression.AnyExpression](path string, e T, window Window) outpu
 }
 
 // TimeIntegral Returns the approximation of the area under a curve.
-// NewStage in version 5.0.
+// NewDefaultStage in version 5.0.
 func TimeIntegral[T expression.AnyExpression](path string, e T, window Window, unit aggregates.MongoTimeUnit) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
 	args[Input] = e
@@ -155,7 +155,7 @@ func Last[T expression.AnyExpression](path string, e T, window Window) outputOpe
 }
 
 // LinearFill Fills null and missing fields in a window using linear interpolation based on
-// surrounding field values. Available in $setWindowFields stage. NewStage in version
+// surrounding field values. Available in $setWindowFields stage. NewDefaultStage in version
 // 5.3.
 func LinearFill[T expression.AnyExpression](path string, e T) outputOperator {
 	return simpleParameterWindowFunction(path, "$linearFill", e, nil)
@@ -163,7 +163,7 @@ func LinearFill[T expression.AnyExpression](path string, e T) outputOperator {
 
 // Locf Last observation carried forward. Sets values for null and missing fields in a
 // window to the last non-null value for the field. Available in $setWindowFields
-// stage. NewStage in version 5.2.
+// stage. NewDefaultStage in version 5.2.
 func Locf[T expression.AnyExpression](path string, e T) outputOperator {
 	return simpleParameterWindowFunction(path, "$locf", e, nil)
 }
@@ -183,7 +183,7 @@ func Min[T expression.AnyExpression](path string, e T, window Window) outputOper
 }
 
 // MinN Returns an aggregation of the n minimum valued elements in a group.
-// Distinct from the $minN array operator. NewStage in version 5.2. Available in
+// Distinct from the $minN array operator. NewDefaultStage in version 5.2. Available in
 // $group, $setWindowFields and as an expression.
 func MinN[I expression.AnyExpression, N expression.IntExpression](path string, in I, n N, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
@@ -202,14 +202,14 @@ func Push[T expression.AnyExpression](path string, e T, window Window) outputOpe
 
 // Rank Returns the document position (known as the rank) relative to other
 // documents in the $setWindowFields stage partition.
-// NewStage in version 5.0.
+// NewDefaultStage in version 5.0.
 func Rank(path string) outputOperator {
 	return simpleParameterWindowFunction(path, "$rank", nil, nil)
 }
 
 // Shift Returns the value from an expression applied to a document in a specified
 // position relative to the current document in the $setWindowFields stage
-// partition. NewStage in version 5.0.
+// partition. NewDefaultStage in version 5.0.
 func Shift[T expression.AnyExpression](path string, e, defaultExpression T, by int32) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
 	args[Output] = e
@@ -241,20 +241,20 @@ func Sum[T expression.AnyExpression](path string, e T, window Window) outputOper
 }
 
 // Top Returns the top element within a group according to the specified sort
-// order. NewStage in version 5.2. Available in $group and $setWindowFields stages.
+// order. NewDefaultStage in version 5.2. Available in $group and $setWindowFields stages.
 func Top[O expression.AnyExpression](path string, sortBy bsonx.Bson, out O, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
-	args[SortBy] = sortBy.Pro()
+	args[SortBy] = sortBy.BsonDocument()
 	args[Output] = out
 	return compoundParameterWindowFunction(path, "$top", args, window)
 }
 
 // TopN Returns an aggregation of the top n fields within a group, according to
-// the specified sort order. NewStage in version 5.2. Available in $group and
+// the specified sort order. NewDefaultStage in version 5.2. Available in $group and
 // $setWindowFields stages.
 func TopN[O expression.AnyExpression, N expression.IntExpression](path string, sortBy bsonx.Bson, out O, n N, window Window) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
-	args[SortBy] = sortBy.Pro()
+	args[SortBy] = sortBy.BsonDocument()
 	args[Output] = out
 	args[NLowercase] = n
 	return compoundParameterWindowFunction(path, "$topN", args, window)
@@ -286,10 +286,10 @@ func NewSimpleParameterFunctionAndWindow[T expression.Expression](functionName s
 }
 
 func (a SimpleParameterFunctionAndWindow[T]) Exp() bsonx.IBsonValue {
-	return a.Pro()
+	return a.BsonDocument()
 }
 
-func (a SimpleParameterFunctionAndWindow[T]) Pro() *bsonx.BsonDocument {
+func (a SimpleParameterFunctionAndWindow[T]) BsonDocument() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	if a.expression != nil {
 		doc.Append(a.functionName, a.expression.Exp())
@@ -301,7 +301,7 @@ func (a SimpleParameterFunctionAndWindow[T]) Pro() *bsonx.BsonDocument {
 }
 
 func (a SimpleParameterFunctionAndWindow[T]) Document() bson.D {
-	return a.Pro().Document()
+	return a.BsonDocument().Document()
 }
 
 type AbstractFunctionAndWindow struct {
@@ -317,20 +317,20 @@ func NewAbstractFunctionAndWindow(functionName string, window Window) AbstractFu
 }
 
 func (a AbstractFunctionAndWindow) Exp() bsonx.IBsonValue {
-	return a.Pro()
+	return a.BsonDocument()
 }
 
-func (a AbstractFunctionAndWindow) Pro() *bsonx.BsonDocument {
-	return bsonx.BsonDoc("window", a.window.Pro())
+func (a AbstractFunctionAndWindow) BsonDocument() *bsonx.BsonDocument {
+	return bsonx.BsonDoc("window", a.window.BsonDocument())
 }
 
 func (a AbstractFunctionAndWindow) Document() bson.D {
-	return a.Pro().Document()
+	return a.BsonDocument().Document()
 }
 
 func (a AbstractFunctionAndWindow) writeWindow(doc *bsonx.BsonDocument) {
 	if a.window != nil {
-		doc.Append("window", a.window.Pro())
+		doc.Append("window", a.window.BsonDocument())
 	}
 }
 
@@ -366,7 +366,7 @@ func NewCompoundParameterFunctionAndWindow[T expression.Expression](functionName
 	}
 }
 
-func (a CompoundParameterFunctionAndWindow[T]) Pro() *bsonx.BsonDocument {
+func (a CompoundParameterFunctionAndWindow[T]) BsonDocument() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
 	args := bsonx.BsonEmpty()
 	for name, value := range a.args {
@@ -378,9 +378,9 @@ func (a CompoundParameterFunctionAndWindow[T]) Pro() *bsonx.BsonDocument {
 }
 
 func (a CompoundParameterFunctionAndWindow[T]) Exp() bsonx.IBsonValue {
-	return a.Pro()
+	return a.BsonDocument()
 }
 
 func (a CompoundParameterFunctionAndWindow[T]) Document() bson.D {
-	return a.Pro().Document()
+	return a.BsonDocument().Document()
 }

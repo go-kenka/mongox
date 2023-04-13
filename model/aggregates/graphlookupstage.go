@@ -7,12 +7,22 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type GraphLookupStage Stage
+type GraphLookupStage struct {
+	stage bsonx.Bson
+}
+
+func (s GraphLookupStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s GraphLookupStage) Document() bson.D {
+	return s.stage.Document()
+}
 
 // GraphLookup Changed in version 5.1. Performs a recursive search on a
 // collection, with options for restricting the search by recursion depth and
 // query filter. The $graphLookup search process is summarized below: Input
-// documents flow into the $graphLookup stage of an aggregation operation.
+// documents flow into the $graphLookup DefaultStage of an aggregation operation.
 // $graphLookup targets the search to the collection designated by the from
 // parameter (see below for full list of search parameters). For each input
 // document, the search begins with the value designated by startWith.
@@ -48,7 +58,7 @@ func GraphLookup[T expression.AnyExpression](
 	as string,
 	options options.GraphLookupOptions,
 ) GraphLookupStage {
-	return NewGraphLookupStage(from, startWith, connectFromField, connectToField, as, options)
+	return GraphLookupStage{stage: NewGraphLookupStage(from, startWith, connectFromField, connectToField, as, options)}
 }
 
 type graphLookupStage[T expression.AnyExpression] struct {
@@ -58,10 +68,6 @@ type graphLookupStage[T expression.AnyExpression] struct {
 	connectToField   string
 	as               string
 	options          options.GraphLookupOptions
-}
-
-func (bs graphLookupStage[T]) Bson() bsonx.Bson {
-	return bs.Pro()
 }
 
 func NewGraphLookupStage[T expression.AnyExpression](
@@ -82,7 +88,7 @@ func NewGraphLookupStage[T expression.AnyExpression](
 	}
 }
 
-func (bs graphLookupStage[T]) Pro() *bsonx.BsonDocument {
+func (bs graphLookupStage[T]) BsonDocument() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("form", bsonx.String(bs.from))
 
@@ -98,12 +104,12 @@ func (bs graphLookupStage[T]) Pro() *bsonx.BsonDocument {
 		data.Append("depthField", bsonx.String(bs.options.GetDepthField()))
 	}
 	if bs.options.GetRestrictSearchWithMatch() != nil {
-		data.Append("restrictSearchWithMatch", bs.options.GetRestrictSearchWithMatch().Pro())
+		data.Append("restrictSearchWithMatch", bs.options.GetRestrictSearchWithMatch().BsonDocument())
 	}
 	b.Append("$graphLookup", data)
 	return b
 }
 
 func (bs graphLookupStage[T]) Document() bson.D {
-	return bs.Pro().Document()
+	return bs.BsonDocument().Document()
 }

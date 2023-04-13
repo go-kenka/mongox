@@ -21,8 +21,8 @@ func NewGeoNearConstructibleBson(base bsonx.Bson, appended *bsonx.Document) GeoN
 	return a
 }
 
-func (a GeoNearConstructibleBson) Pro() *bsonx.BsonDocument {
-	baseDoc := a.base.Pro()
+func (a GeoNearConstructibleBson) BsonDocument() *bsonx.BsonDocument {
+	baseDoc := a.base.BsonDocument()
 	if baseDoc.IsEmpty() && a.appended.IsEmpty() {
 		return bsonx.BsonEmpty()
 	}
@@ -31,11 +31,11 @@ func (a GeoNearConstructibleBson) Pro() *bsonx.BsonDocument {
 		return baseDoc
 	}
 
-	return bsonx.NewMerged(baseDoc, a.appended.Pro())
+	return bsonx.NewMerged(baseDoc, a.appended.BsonDocument())
 }
 
 func (a GeoNearConstructibleBson) Document() bson.D {
-	return a.Pro().Document()
+	return a.BsonDocument().Document()
 }
 
 func (a GeoNearConstructibleBson) newAppended(name string, value any) GeoNearConstructibleBson {
@@ -64,7 +64,7 @@ func (a GeoNearConstructibleBson) of(doc bsonx.Bson) GeoNearConstructibleBson {
 	return NewGeoNearConstructibleBson(doc, nil)
 }
 func (a GeoNearConstructibleBson) remove(key string) GeoNearConstructibleBson {
-	doc := a.base.Pro()
+	doc := a.base.BsonDocument()
 	doc.Remove(key)
 	appended := a.appended
 	appended.Remove(key)

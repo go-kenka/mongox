@@ -21,7 +21,7 @@ type accumulatorOperator struct {
 }
 
 func (o accumulatorOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // AddToSet Changed in version 5.0. $addToSet $addToSet returns an array of all
@@ -230,12 +230,12 @@ func pickNAccumulator[T expression.AnyExpression, N expression.IntExpression](ac
 }
 func sortingPickAccumulator[T expression.AnyExpression](accumulatorName string, sort bsonx.Bson, out T) bsonx.Bson {
 	return bsonx.BsonDoc(accumulatorName,
-		bsonx.BsonDoc("sortBy", sort.Pro()).Append("output", out),
+		bsonx.BsonDoc("sortBy", sort.BsonDocument()).Append("output", out),
 	)
 }
 func sortingPickNAccumulator[T expression.AnyExpression, N expression.IntExpression](accumulatorName string, sort bsonx.Bson, out T, n N) bsonx.Bson {
 	return bsonx.BsonDoc(accumulatorName,
-		bsonx.BsonDoc("sortBy", sort.Pro()).
+		bsonx.BsonDoc("sortBy", sort.BsonDocument()).
 			Append("output", out).
 			Append("n", n),
 	)

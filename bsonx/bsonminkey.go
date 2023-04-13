@@ -7,6 +7,9 @@ type BsonMinKey struct {
 	data primitive.MinKey
 }
 
+func (a *BsonMinKey) Exp() IBsonValue {
+	return a
+}
 func (a *BsonMinKey) GetBsonType() BsonType {
 	return MIN_KEY
 }

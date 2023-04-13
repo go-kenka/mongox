@@ -10,7 +10,7 @@ type CustomOperator struct {
 }
 
 func (o CustomOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // Accumulator New in version 4.4. Defines a custom accumulator operator.

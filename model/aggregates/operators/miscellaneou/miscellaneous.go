@@ -10,7 +10,7 @@ type miscellaneousOperator struct {
 }
 
 func (o miscellaneousOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // GetField New in version 5.0.

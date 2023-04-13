@@ -21,8 +21,8 @@ func NewDensifyConstructibleBson(base bsonx.Bson, appended bsonx.Document) Densi
 	return a
 }
 
-func (a DensifyConstructibleBson) Pro() *bsonx.BsonDocument {
-	baseDoc := a.base.Pro()
+func (a DensifyConstructibleBson) BsonDocument() *bsonx.BsonDocument {
+	baseDoc := a.base.BsonDocument()
 	if baseDoc.IsEmpty() && a.appended.IsEmpty() {
 		return bsonx.BsonEmpty()
 	}
@@ -31,11 +31,11 @@ func (a DensifyConstructibleBson) Pro() *bsonx.BsonDocument {
 		return baseDoc
 	}
 
-	return bsonx.NewMerged(baseDoc, a.appended.Pro())
+	return bsonx.NewMerged(baseDoc, a.appended.BsonDocument())
 }
 
 func (a DensifyConstructibleBson) Document() bson.D {
-	return a.Pro().Document()
+	return a.BsonDocument().Document()
 }
 
 func (a DensifyConstructibleBson) newAppended(name string, value any) DensifyConstructibleBson {
@@ -57,7 +57,7 @@ func (a DensifyConstructibleBson) newMutated(d bsonx.Document) DensifyConstructi
 	}
 }
 func (a DensifyConstructibleBson) remove(key string) DensifyConstructibleBson {
-	doc := a.base.Pro()
+	doc := a.base.BsonDocument()
 	doc.Remove(key)
 	appended := a.appended
 	appended.Remove(key)

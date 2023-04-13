@@ -7,16 +7,26 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type GroupStage Stage
+type GroupStage struct {
+	stage bsonx.Bson
+}
 
-// Group The $group stage separates documents into groups according to a "group key".
+func (s GroupStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s GroupStage) Document() bson.D {
+	return s.stage.Document()
+}
+
+// Group The $group DefaultStage separates documents into groups according to a "group key".
 // The output is one document for each unique group key. A group key is often a
 // field, or group of fields. The group key can also be the result of an
-// expression. Use the _id field in the $group pipeline stage to set the group
-// key. See below for usage examples. In the $group stage output, the _id field
+// expression. Use the _id field in the $group pipeline DefaultStage to set the group
+// key. See below for usage examples. In the $group DefaultStage output, the _id field
 // is set to the group key for that document. The output documents can also
 // contain additional fields that are set using accumulator expressions. The
-// $group stage has the following prototype form:
+// $group DefaultStage has the following prototype form:
 //
 //	{
 //	 $group:
@@ -27,16 +37,12 @@ type GroupStage Stage
 //	   }
 //	}
 func Group[T expression.AnyExpression](id T, fieldAccumulators ...accumulator.AccumulatorBson) GroupStage {
-	return NewGroupStage(id, fieldAccumulators)
+	return GroupStage{stage: NewGroupStage(id, fieldAccumulators)}
 }
 
 type groupStage[T expression.AnyExpression] struct {
 	id                T
 	fieldAccumulators []accumulator.AccumulatorBson
-}
-
-func (bs groupStage[T]) Bson() bsonx.Bson {
-	return bs.Pro()
 }
 
 func NewGroupStage[T expression.AnyExpression](id T, fieldAccumulators []accumulator.AccumulatorBson) groupStage[T] {
@@ -46,13 +52,13 @@ func NewGroupStage[T expression.AnyExpression](id T, fieldAccumulators []accumul
 	}
 }
 
-func (bs groupStage[T]) Pro() *bsonx.BsonDocument {
+func (bs groupStage[T]) BsonDocument() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonDoc("_id", bs.id)
 
 	if len(bs.fieldAccumulators) > 0 {
 		for _, field := range bs.fieldAccumulators {
-			data = bsonx.NewMerged(data, field.Pro())
+			data = bsonx.NewMerged(data, field.BsonDocument())
 		}
 	}
 
@@ -61,5 +67,5 @@ func (bs groupStage[T]) Pro() *bsonx.BsonDocument {
 }
 
 func (bs groupStage[T]) Document() bson.D {
-	return bs.Pro().Document()
+	return bs.BsonDocument().Document()
 }

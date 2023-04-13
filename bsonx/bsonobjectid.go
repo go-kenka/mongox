@@ -7,6 +7,10 @@ type BsonObjectId struct {
 	data primitive.ObjectID
 }
 
+func (a *BsonObjectId) Exp() IBsonValue {
+	return a
+}
+
 func ObjectId(data primitive.ObjectID) *BsonObjectId {
 	return &BsonObjectId{
 		data: data,

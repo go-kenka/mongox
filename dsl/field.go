@@ -5,7 +5,7 @@ type FieldFn func(f *FieldExpr)
 type FieldExpr struct {
 	Name       string       // 字段名称
 	Type       MongoType    // 字段类型
-	ObjectAttr []*FieldExpr // 只在Object和Array类型时生效
+	ObjectAttr []*FieldExpr // 只在EmbeddedDocument和Array类型时生效
 	ArrayType  MongoType    // Array类型时生效，如果是对象数组，则依赖ObjectAttr对象属性字段
 	Subtype    byte         // binData时使用
 	Comment    string       // 备注

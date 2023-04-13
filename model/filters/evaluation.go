@@ -13,7 +13,7 @@ type evaluationFilter struct {
 }
 
 func (f evaluationFilter) Value() bsonx.IBsonValue {
-	return f.filter.Pro()
+	return f.filter.BsonDocument()
 }
 
 func (f evaluationFilter) Document() bson.D {
@@ -32,7 +32,7 @@ func Expr[I expression.AnyExpression](expression I) evaluationFilter {
 // formatted according to draft 4 of the JSON Schema standard { <keyword1>:
 // <value1>, ... }
 func JsonSchema(schema bsonx.Bson) evaluationFilter {
-	return evaluationFilter{filter: newSimpleEncodingFilter("$jsonSchema", schema.Pro())}
+	return evaluationFilter{filter: newSimpleEncodingFilter("$jsonSchema", schema.BsonDocument())}
 }
 
 // Mod Select documents where the value of a field divided by a divisor has the
@@ -79,7 +79,7 @@ type whereFilter struct {
 }
 
 func (f whereFilter) Value() bsonx.IBsonValue {
-	return f.filter.Pro()
+	return f.filter.BsonDocument()
 }
 
 func (f whereFilter) Document() bson.D {

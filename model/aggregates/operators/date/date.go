@@ -13,10 +13,10 @@ type dateOperator struct {
 }
 
 func (o dateOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
-// DateAdd NewStage in version 5.0.
+// DateAdd NewDefaultStage in version 5.0.
 // Increments a Date object by a specified number of time units.
 // The $dateAdd expression has the following syntax:
 //
@@ -40,7 +40,7 @@ func DateAdd[T expression.DateExpression, N expression.NumberExpression](startDa
 	return dateOperator{doc: aggregates.NewSimpleFilter("$dateAdd", doc)}
 }
 
-// DateDiff NewStage in version 5.0.
+// DateDiff NewDefaultStage in version 5.0.
 // Returns the difference between two dates.
 // The $dateDiff expression has this syntax:
 //
@@ -162,15 +162,15 @@ func DateFromString(dateString string, options DateFromStringOptions) dateOperat
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
 	if options.onError != nil {
-		doc.Append("onError", options.onError.Pro())
+		doc.Append("onError", options.onError.BsonDocument())
 	}
 	if options.onNull != nil {
-		doc.Append("onNull", options.onNull.Pro())
+		doc.Append("onNull", options.onNull.BsonDocument())
 	}
 	return dateOperator{doc: aggregates.NewSimpleFilter("$dateFromString", doc)}
 }
 
-// DateSubtract NewStage in version 5.0.
+// DateSubtract NewDefaultStage in version 5.0.
 // Decrements a Date object by a specified number of time units.
 // The $dateSubtract expression has the following syntax:
 //
@@ -240,12 +240,12 @@ func DateToString[T expression.DateExpression](date T, options DateToStringOptio
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
 	if options.onNull != nil {
-		doc.Append("onNull", options.onNull.Pro())
+		doc.Append("onNull", options.onNull.BsonDocument())
 	}
 	return dateOperator{doc: aggregates.NewSimpleFilter("$dateToString", doc)}
 }
 
-// DateTrunc NewStage in version 5.0.
+// DateTrunc NewDefaultStage in version 5.0.
 // Truncates a date.
 // $dateTrunc syntax:
 //
@@ -446,14 +446,14 @@ func NewSimpleFormatDate[T expression.DateExpression](name string, date T, optio
 	}
 }
 
-func (s SimpleFormatDate[T]) Pro() *bsonx.BsonDocument {
+func (s SimpleFormatDate[T]) BsonDocument() *bsonx.BsonDocument {
 	format := bsonx.Doc("date", s.date)
 	if s.options.timezone != "" {
 		format.Append("timezone", s.options.timezone)
 	}
-	return format.Pro()
+	return format.BsonDocument()
 }
 
 func (s SimpleFormatDate[T]) Document() bson.D {
-	return s.Pro().Document()
+	return s.BsonDocument().Document()
 }

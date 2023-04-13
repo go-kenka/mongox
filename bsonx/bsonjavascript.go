@@ -13,6 +13,10 @@ func JavaScript(data primitive.JavaScript) *BsonJavaScript {
 	}
 }
 
+func (a *BsonJavaScript) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonJavaScript) GetBsonType() BsonType {
 	return JAVASCRIPT
 }

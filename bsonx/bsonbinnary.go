@@ -13,6 +13,10 @@ func Binary(data primitive.Binary) *BsonBinary {
 	}
 }
 
+func (a *BsonBinary) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonBinary) GetBsonType() BsonType {
 	return BINARY
 }

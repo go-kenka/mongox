@@ -6,11 +6,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type FillStage Stage
+type FillStage struct {
+	stage bsonx.Bson
+}
 
-// Fill NewStage in version 5.3. Populates null and missing field values within documents.
+func (s FillStage) Bson() bsonx.Bson {
+	return s.stage
+}
+
+func (s FillStage) Document() bson.D {
+	return s.stage.Document()
+}
+
+// Fill NewDefaultStage in version 5.3. Populates null and missing field values within documents.
 // You can use $fill to populate missing data points: In a sequence based on
-// surrounding values. With a fixed value. The $fill stage has this syntax:
+// surrounding values. With a fixed value. The $fill DefaultStage has this syntax:
 //
 //	{
 //	  $fill: {
@@ -30,18 +40,14 @@ type FillStage Stage
 //	  }
 //	}
 //
-// The $fill stage takes a document with these fields:
+// The $fill DefaultStage takes a document with these fields:
 func Fill(options fill.FillOptions, output []fill.FillOutputField) FillStage {
-	return NewFillStage(options, output)
+	return FillStage{stage: NewFillStage(options, output)}
 }
 
 type fillStage struct {
 	output  []fill.FillOutputField
 	options fill.FillOptions
-}
-
-func (f fillStage) Bson() bsonx.Bson {
-	return f.Pro()
 }
 
 func NewFillStage(
@@ -54,12 +60,12 @@ func NewFillStage(
 	}
 }
 
-func (f fillStage) Pro() *bsonx.BsonDocument {
+func (f fillStage) BsonDocument() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
-	doc = bsonx.NewMerged(doc, f.options.Pro())
+	doc = bsonx.NewMerged(doc, f.options.BsonDocument())
 	outputDoc := bsonx.BsonEmpty()
 	for _, computation := range f.output {
-		computationDoc := computation.Pro()
+		computationDoc := computation.BsonDocument()
 		if computationDoc.Size() == 1 {
 			outputDoc = bsonx.NewMerged(outputDoc, computationDoc)
 		}
@@ -68,6 +74,7 @@ func (f fillStage) Pro() *bsonx.BsonDocument {
 	doc.Append("output", outputDoc)
 	return bsonx.BsonDoc("$fill", doc)
 }
+
 func (f fillStage) Document() bson.D {
-	return f.Pro().Document()
+	return f.BsonDocument().Document()
 }

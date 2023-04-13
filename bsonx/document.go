@@ -25,7 +25,7 @@ func Doc(key string, value any) *Document {
 	}
 }
 
-func (d *Document) Pro() *BsonDocument {
+func (d *Document) BsonDocument() *BsonDocument {
 	bd := BsonEmpty()
 	for _, v := range d.data {
 		bd.Append(v.Key, toBsonValue(v.Value))

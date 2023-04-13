@@ -10,10 +10,10 @@ type variableOperator struct {
 }
 
 func (o variableOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 func Let[T expression.AnyExpression](vars bsonx.Bson, in T) variableOperator {
 	return variableOperator{doc: bsonx.BsonDoc("$let",
-		bsonx.BsonDoc("vars", vars.Pro()).Append("in", in))}
+		bsonx.BsonDoc("vars", vars.BsonDocument()).Append("in", in))}
 }

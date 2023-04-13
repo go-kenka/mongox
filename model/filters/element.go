@@ -10,7 +10,7 @@ type elementFilter struct {
 }
 
 func (f elementFilter) Value() bsonx.IBsonValue {
-	return f.filter.Pro()
+	return f.filter.BsonDocument()
 }
 
 func (f elementFilter) Document() bson.D {

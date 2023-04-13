@@ -15,6 +15,10 @@ func Decimal128(data primitive.Decimal128) *BsonDecimal128 {
 	}
 }
 
+func (a *BsonDecimal128) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonDecimal128) GetBsonType() BsonType {
 	return DECIMAL128
 }

@@ -11,7 +11,7 @@ type arrayFilter struct {
 }
 
 func (f arrayFilter) Value() bsonx.IBsonValue {
-	return f.filter.Pro()
+	return f.filter.BsonDocument()
 }
 
 func (f arrayFilter) Document() bson.D {
@@ -32,7 +32,7 @@ func All[I expression.AnyExpression](fieldName string, values ...I) arrayFilter 
 // <query> condition in the $elemMatch expression, and are not using the $not or
 // $ne operators inside of $elemMatch, $elemMatch can be omitted.
 func ElemMatch(fieldName string, filter bsonx.Bson) arrayFilter {
-	return arrayFilter{filter: bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$elemMatch", filter.Pro()))}
+	return arrayFilter{filter: bsonx.BsonDoc(fieldName, bsonx.BsonDoc("$elemMatch", filter.BsonDocument()))}
 }
 
 // Size The $size operator matches any array with the number of elements

@@ -13,6 +13,10 @@ func Timestamp() *BsonTimestamp {
 	}
 }
 
+func (a *BsonTimestamp) Exp() IBsonValue {
+	return a
+}
+
 func (a *BsonTimestamp) GetBsonType() BsonType {
 	return TIMESTAMP
 }

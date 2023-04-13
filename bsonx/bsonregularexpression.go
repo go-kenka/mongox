@@ -12,7 +12,9 @@ func RegularExpression(data primitive.Regex) *BsonRegularExpression {
 		data: data,
 	}
 }
-
+func (a *BsonRegularExpression) Exp() IBsonValue {
+	return a
+}
 func (a *BsonRegularExpression) GetBsonType() BsonType {
 	return REGULAR_EXPRESSION
 }

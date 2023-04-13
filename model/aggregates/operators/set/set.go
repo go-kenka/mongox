@@ -13,7 +13,7 @@ type setOperator struct {
 }
 
 func (o setOperator) Exp() bsonx.IBsonValue {
-	return o.doc.Pro()
+	return o.doc.BsonDocument()
 }
 
 // AllElementsTrue Evaluates an array as a set and returns true if no element in the array is false. Otherwise, returns false. An empty array returns true.
