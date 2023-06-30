@@ -17,7 +17,7 @@ func NewUserCreate(cc *mongo.Collection) *UserCreate {
 }
 
 func (q *UserCreate) InsertOne(ctx context.Context, doc UserData, opts ...*options.InsertOneOptions) (*UserData, error) {
-	doc.Id = primitive.NewObjectID()
+	doc.ID = primitive.NewObjectID()
 	_, err := q.cc.InsertOne(ctx, doc, opts...)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func (q *UserCreate) InsertOne(ctx context.Context, doc UserData, opts ...*optio
 
 func (q *UserCreate) InsertMany(ctx context.Context, docs []UserData, opts ...*options.InsertManyOptions) ([]UserData, error) {
 	for _, doc := range docs {
-		doc.Id = primitive.NewObjectID()
+		doc.ID = primitive.NewObjectID()
 	}
 
 	_, err := q.cc.InsertMany(ctx, toSlice(docs), opts...)

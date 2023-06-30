@@ -2,7 +2,7 @@ package size
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/bsonx/expression"
 )
 
 type sizeOperator struct {

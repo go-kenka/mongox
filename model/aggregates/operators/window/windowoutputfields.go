@@ -2,7 +2,7 @@ package window
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/bsonx/expression"
 	"github.com/go-kenka/mongox/model/aggregates"
 	"go.mongodb.org/mongo-driver/bson"
 )

@@ -2,7 +2,7 @@ package updates
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/bsonx/expression"
 	"github.com/go-kenka/mongox/model/filters"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -194,7 +194,7 @@ func PullByFilter(filter filters.Filter) updateStage {
 // operator has the form: { $pullAll: { <field1>: [ <value1>, <value2> ... ],
 // ... } } To specify a <field> in an embedded document or in an array, use dot
 // notation.
-func PullAll[I bsonx.Expression](fieldName string, values []I) updateStage {
+func PullAll[I expression.AnyExpression](fieldName string, values []I) updateStage {
 	return updateStage{update: NewPullAllUpdate(fieldName, values)}
 }
 
@@ -273,13 +273,13 @@ func (s simpleBsonKeyValue) Document() bson.D {
 	return s.BsonDocument().Document()
 }
 
-type simpleUpdate[T bsonx.Expression] struct {
+type simpleUpdate[T expression.AnyExpression] struct {
 	fieldName string
 	value     T
 	operator  string
 }
 
-func NewSimpleUpdate[T bsonx.Expression](fieldName string, value T, operator string) simpleUpdate[T] {
+func NewSimpleUpdate[T expression.AnyExpression](fieldName string, value T, operator string) simpleUpdate[T] {
 	return simpleUpdate[T]{
 		fieldName: fieldName,
 		value:     value,
@@ -295,13 +295,13 @@ func (s simpleUpdate[T]) Document() bson.D {
 	return s.BsonDocument().Document()
 }
 
-type withEachUpdate[T bsonx.Expression] struct {
+type withEachUpdate[T expression.AnyExpression] struct {
 	fieldName string
 	values    []T
 	operator  string
 }
 
-func NewWithEachUpdate[T bsonx.Expression](fieldName string, values []T, operator string) withEachUpdate[T] {
+func NewWithEachUpdate[T expression.AnyExpression](fieldName string, values []T, operator string) withEachUpdate[T] {
 	return withEachUpdate[T]{
 		fieldName: fieldName,
 		values:    values,
@@ -331,12 +331,12 @@ func (w withEachUpdate[T]) Document() bson.D {
 	return w.BsonDocument().Document()
 }
 
-type pushUpdate[T bsonx.Expression] struct {
+type pushUpdate[T expression.AnyExpression] struct {
 	withEachUpdate[T]
 	options PushOptions
 }
 
-func NewPushUpdate[T bsonx.Expression](fieldName string, values []T, options PushOptions) pushUpdate[T] {
+func NewPushUpdate[T expression.AnyExpression](fieldName string, values []T, options PushOptions) pushUpdate[T] {
 	return pushUpdate[T]{
 		withEachUpdate: NewWithEachUpdate(fieldName, values, "$push"),
 		options:        options,
@@ -363,12 +363,12 @@ func (p pushUpdate[T]) additionalFieldsToString() string {
 	return ", options=" + p.options.ToString()
 }
 
-type pullAllUpdate[T bsonx.Expression] struct {
+type pullAllUpdate[T expression.AnyExpression] struct {
 	fieldName string
 	values    []T
 }
 
-func NewPullAllUpdate[T bsonx.Expression](fieldName string, values []T) pullAllUpdate[T] {
+func NewPullAllUpdate[T expression.AnyExpression](fieldName string, values []T) pullAllUpdate[T] {
 	return pullAllUpdate[T]{
 		fieldName: fieldName,
 		values:    values,

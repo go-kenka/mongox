@@ -1,0 +1,17 @@
+package schema
+
+import (
+	"github.com/go-kenka/mongox"
+	"github.com/go-kenka/mongox/schema/field"
+)
+
+type {{. | camelCase}} struct {
+	mongox.Schema
+}
+
+func ({{. | camelCase}}) Fields() []mongox.Field {
+	return []mongox.Field{
+		field.ObjectId("_id").Tag(`json:"id"`).Optional(),
+		field.String("user_name").Tag(`json:"user_name"`).Optional(),
+	}
+}

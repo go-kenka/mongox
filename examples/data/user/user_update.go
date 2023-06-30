@@ -15,7 +15,7 @@ import (
 type UserUpdateMany struct {
 	cc     *mongo.Collection
 	filter bson.D
-	update any
+	update updates.Update
 	opts   *options.UpdateOptions
 }
 
@@ -31,7 +31,7 @@ func (u *UserUpdateMany) SetFilter(f filters.Filter) *UserUpdateMany {
 
 // SetUpdate set update doc
 func (u *UserUpdateMany) SetUpdate(up updates.Update) *UserUpdateMany {
-	u.update = up.Document()
+	u.update = up
 	return u
 }
 
@@ -78,13 +78,13 @@ func (u *UserUpdateMany) SetLet(l interface{}) *UserUpdateMany {
 }
 
 func (u *UserUpdateMany) Save(ctx context.Context) (*mongo.UpdateResult, error) {
-	return u.cc.UpdateMany(ctx, u.filter, u.update, u.opts)
+	return u.cc.UpdateMany(ctx, u.filter, u.update.Document(), u.opts)
 }
 
 type UserUpdateOne struct {
 	cc     *mongo.Collection
 	filter bson.D
-	update any
+	update updates.Update
 	opts   *options.UpdateOptions
 }
 
@@ -100,7 +100,7 @@ func (u *UserUpdateOne) SetFilter(f filters.Filter) *UserUpdateOne {
 
 // SetUpdate set update doc
 func (u *UserUpdateOne) SetUpdate(up updates.Update) *UserUpdateOne {
-	u.update = up.Document()
+	u.update = up
 	return u
 }
 
@@ -147,13 +147,13 @@ func (u *UserUpdateOne) SetLet(l interface{}) *UserUpdateOne {
 }
 
 func (u *UserUpdateOne) Save(ctx context.Context) (*mongo.UpdateResult, error) {
-	return u.cc.UpdateOne(ctx, u.filter, u.update, u.opts)
+	return u.cc.UpdateOne(ctx, u.filter, u.update.Document(), u.opts)
 }
 
 type UserUpdateOneID struct {
 	cc     *mongo.Collection
 	filter bson.D
-	update any
+	update updates.Update
 	opts   *options.UpdateOptions
 }
 
@@ -166,7 +166,7 @@ func NewUserUpdateOneID(id primitive.ObjectID, cc *mongo.Collection) *UserUpdate
 
 // SetUpdate set update doc
 func (u *UserUpdateOneID) SetUpdate(up updates.Update) *UserUpdateOneID {
-	u.update = up.Document()
+	u.update = up
 	return u
 }
 
@@ -213,7 +213,7 @@ func (u *UserUpdateOneID) SetLet(l interface{}) *UserUpdateOneID {
 }
 
 func (u *UserUpdateOneID) Save(ctx context.Context) (*mongo.UpdateResult, error) {
-	return u.cc.UpdateByID(ctx, u.filter, u.update, u.opts)
+	return u.cc.UpdateByID(ctx, u.filter, u.update.Document(), u.opts)
 }
 
 type UserReplaceOne struct {

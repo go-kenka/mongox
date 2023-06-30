@@ -2,7 +2,7 @@ package aggregates
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/bsonx/expression"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

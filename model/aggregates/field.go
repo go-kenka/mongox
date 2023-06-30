@@ -1,7 +1,7 @@
 package aggregates
 
 import (
-	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/bsonx/expression"
 )
 
 type Field[T expression.AnyExpression] struct {

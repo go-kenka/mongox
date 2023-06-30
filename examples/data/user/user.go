@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 
 	"github.com/go-kenka/mongox/model/aggregates/watch"
 	"github.com/go-kenka/mongox/model/bulks"
@@ -18,37 +19,19 @@ const (
 )
 
 type UserClient struct {
-	cc *mongo.Collection
+	c  *mongo.Client
+	db string
 }
 
 func NewUserClient(db *mongo.Client) *UserClient {
 	return &UserClient{
-		cc: db.Database(DatabaseName).Collection(CollectionName),
+		c: db,
 	}
 }
 
-//
-// Double           MongoType = 0x01
-// String           MongoType = 0x02
-// EmbeddedDocument MongoType = 0x03
-// Array            MongoType = 0x04
-// Binary           MongoType = 0x05
-// ObjectID         MongoType = 0x07
-// Boolean          MongoType = 0x08
-// DateTime         MongoType = 0x09
-// Regex            MongoType = 0x0B
-// DBPointer        MongoType = 0x0C
-// JavaScript       MongoType = 0x0D
-// Symbol           MongoType = 0x0E
-// CodeWithScope    MongoType = 0x0F
-// Int32            MongoType = 0x10
-// Timestamp        MongoType = 0x11
-// Int64            MongoType = 0x12
-// Decimal128       MongoType = 0x13
-
 // UserData .
 type UserData struct {
-	ObjectID         primitive.ObjectID     `bson:"_id"`
+	ID               primitive.ObjectID     `bson:"_id"`
 	Double           float64                `bson:"double"`
 	String           string                 `bson:"string"`
 	EmbeddedDocument *EmbeddedDocument_Data `bson:"embedded_document"`
@@ -64,7 +47,10 @@ type UserData struct {
 	Decimal128       primitive.Decimal128   `bson:"decimal128"`
 }
 
-func (d UserData) name() {
+func (d UserData) Document() any {
+	return d
+}
+func (d UserData) Update() {
 
 }
 
@@ -100,64 +86,77 @@ type Array_Data struct {
 	Decimal128       primitive.Decimal128   `bson:"decimal128"`
 }
 
+func (c *UserClient) DBName(database string) *UserClient {
+	c.db = database
+	return c
+}
+
+func (c *UserClient) collection() *mongo.Collection {
+	if len(c.db) == 0 {
+		panic(errors.New("db not set"))
+	}
+
+	return c.c.Database(c.db).Collection(CollectionName)
+}
+
 func (c *UserClient) Query() *UserQuery {
-	return NewUserQuery(c.cc)
+	return NewUserQuery(c.collection())
 }
 
 func (c *UserClient) Create() *UserCreate {
-	return NewUserCreate(c.cc)
+	return NewUserCreate(c.collection())
 }
 
 func (c *UserClient) UpdateMany() *UserUpdateMany {
-	return NewUserUpdateMany(c.cc)
+	return NewUserUpdateMany(c.collection())
 }
 
 func (c *UserClient) UpdateOne() *UserUpdateOne {
-	return NewUserUpdateOne(c.cc)
+	return NewUserUpdateOne(c.collection())
 }
 
 func (c *UserClient) UpdateOneID(id primitive.ObjectID) *UserUpdateOneID {
-	return NewUserUpdateOneID(id, c.cc)
+	return NewUserUpdateOneID(id, c.collection())
 }
 
 func (c *UserClient) ReplaceOne() *UserReplaceOne {
-	return NewUserReplaceOne(c.cc)
+	return NewUserReplaceOne(c.collection())
 }
 
 func (c *UserClient) DeleteMany() *UserDeleteMany {
-	return NewUserDeleteMany(c.cc)
+	return NewUserDeleteMany(c.collection())
 }
 
 func (c *UserClient) DeleteOne() *UserDeleteOne {
-	return NewUserDeleteOne(c.cc)
+	return NewUserDeleteOne(c.collection())
 }
 
 func (c *UserClient) Aggregate() *UserAggregate {
-	return NewUserAggregate(c.cc)
+	return NewUserAggregate(c.collection())
 }
 
 func (c *UserClient) Drop(ctx context.Context) error {
-	return c.cc.Drop(ctx)
+	return c.collection().Drop(ctx)
 }
 
 func (c *UserClient) Watch(ctx context.Context, pipeline watch.WatchPipe, opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
-	return c.cc.Watch(ctx, pipeline.Pipe(), opts...)
+	return c.collection().Watch(ctx, pipeline.Pipe(), opts...)
 }
 
 func (c *UserClient) Indexes() mongo.IndexView {
-	return c.cc.Indexes()
+	return c.collection().Indexes()
 }
 
 func (c *UserClient) Clone(opts ...*options.CollectionOptions) (*mongo.Collection, error) {
-	return c.cc.Clone(opts...)
+	return c.collection().Clone(opts...)
 }
 
 func (c *UserClient) Name() string {
-	return c.cc.Name()
+	return c.collection().Name()
 }
 
 func (c *UserClient) Database() *mongo.Database {
-	return c.cc.Database()
+	return c.collection().Database()
 }
 
 func (c *UserClient) BulkWrite(ctx context.Context, mds []bulks.BulkModel, opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error) {
@@ -165,5 +164,5 @@ func (c *UserClient) BulkWrite(ctx context.Context, mds []bulks.BulkModel, opts 
 	for _, stage := range mds {
 		models = append(models, stage.WriteModel())
 	}
-	return c.cc.BulkWrite(ctx, models, opts...)
+	return c.collection().BulkWrite(ctx, models, opts...)
 }
