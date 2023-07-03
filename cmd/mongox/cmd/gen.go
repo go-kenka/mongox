@@ -67,10 +67,10 @@ var genCmd = &cobra.Command{
 
 		fmt.Println("代码生成完成")
 		fmt.Println("正在使用gofmt格式化代码")
-		// err = utils.GoFmt(fullPath)
-		// if err != nil {
-		// 	fmt.Println("格式化出错了，请安装gofmt,并将bin目录设置到环境变量中")
-		// }
+		err = utils.GoFmt(relaPath)
+		if err != nil {
+			fmt.Println("格式化出错了，请安装gofmt,并将bin目录设置到环境变量中", err)
+		}
 		fmt.Println("格式化完成")
 	},
 }

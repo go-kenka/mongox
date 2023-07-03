@@ -2,7 +2,7 @@ package filters
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
+	"github.com/go-kenka/mongox/internal/expression"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

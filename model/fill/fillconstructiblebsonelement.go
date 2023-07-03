@@ -29,7 +29,7 @@ func (a FillConstructibleBsonElement) newWithAppendedValue(name string, value an
 	return a.newWithMutatedValue(bsonx.Doc(name, value))
 }
 
-func (a FillConstructibleBsonElement) newWithMutatedValue(d bsonx.Document) FillConstructibleBsonElement {
+func (a FillConstructibleBsonElement) newWithMutatedValue(d *bsonx.Document) FillConstructibleBsonElement {
 	return a.newSelf(a.baseElement, a.appendedElementValue.newMutated(d))
 }
 
@@ -41,12 +41,9 @@ func (a FillConstructibleBsonElement) BsonDocument() *bsonx.BsonDocument {
 
 	baseElementValueDoc := bsonx.BsonEmpty()
 	baseElementName := ""
-	for k, baseElementValue := range baseDoc.Data() {
-		baseElementName = k
-		v, ok := baseElementValue.(bsonx.BsonValue)
-		if !ok {
-			panic(fmt.Errorf("baseElement value must be a document, but it is %v", v))
-		}
+	for _, baseElementValue := range baseDoc.Data() {
+		baseElementName = baseElementValue.Key
+		v := baseElementValue.Value
 		if !v.IsDocument() {
 			panic(fmt.Errorf("baseElement value must be a document, but it is %v", v.GetBsonType()))
 		}

@@ -2,164 +2,168 @@
 package user
 
 import (
-"context"
-"errors"
+	"context"
+	"errors"
 
-"github.com/go-kenka/mongox/model/aggregates/watch"
-"github.com/go-kenka/mongox/model/bulks"
-"go.mongodb.org/mongo-driver/bson/primitive"
-"go.mongodb.org/mongo-driver/mongo"
-"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/go-kenka/mongox/model/aggregates/watch"
+	"github.com/go-kenka/mongox/model/bulks"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
-    CollectionName    = "user"
-        ColumnFieldId = "_id"
-        ColumnFieldString = "string"
-        ColumnFieldBool = "bool"
-        ColumnFieldBinary = "binary"
-        ColumnFieldDouble = "double"
-        ColumnFieldDataTime = "data_time"
-        ColumnFieldCreateAt = "create_at"
-        ColumnFieldPointer = "pointer"
-        ColumnFieldDecimal = "decimal"
-        ColumnFieldInt32 = "int32"
-        ColumnFieldInt64 = "int64"
-        ColumnFieldJs = "js"
-        ColumnFieldJsScope = "js_scope"
-        ColumnFieldRegular = "regular"
-        ColumnFieldInt32s = "int32s"
-        ColumnFieldInt64s = "int64s"
-        ColumnFieldStrings = "strings"
-        ColumnFieldFloats = "floats"
-        ColumnFieldArrayobjectSimple = "arrayobject_simple"
-        ColumnFieldArrayobjectSimpleId = "arrayobject_simple._id"
-        ColumnFieldArrayobjectSimpleString = "arrayobject_simple.string"
-        ColumnFieldArrayobjectSimpleBool = "arrayobject_simple.bool"
-        ColumnFieldArrayobjectSimpleBinary = "arrayobject_simple.binary"
-        ColumnFieldArrayobjectSimpleDouble = "arrayobject_simple.double"
-        ColumnFieldArrayobjectSimpleDataTime = "arrayobject_simple.data_time"
-        ColumnFieldArrayobjectSimpleCreateAt = "arrayobject_simple.create_at"
-        ColumnFieldArrayobjectSimplePointer = "arrayobject_simple.pointer"
-        ColumnFieldArrayobjectSimpleDecimal = "arrayobject_simple.decimal"
-        ColumnFieldArrayobjectSimpleInt32 = "arrayobject_simple.int32"
-        ColumnFieldArrayobjectSimpleInt64 = "arrayobject_simple.int64"
-        ColumnFieldArrayobjectSimpleJs = "arrayobject_simple.js"
-        ColumnFieldArrayobjectSimpleJsScope = "arrayobject_simple.js_scope"
-        ColumnFieldArrayobjectSimpleRegular = "arrayobject_simple.regular"
-        ColumnFieldArrayobjectSimpleInt32s = "arrayobject_simple.int32s"
-        ColumnFieldArrayobjectSimpleInt64s = "arrayobject_simple.int64s"
-        ColumnFieldArrayobjectSimpleStrings = "arrayobject_simple.strings"
-        ColumnFieldArrayobjectSimpleFloats = "arrayobject_simple.floats"
-        ColumnFieldObjectSimple = "object_simple"
-        ColumnFieldObjectSimpleId = "object_simple._id"
-        ColumnFieldObjectSimpleString = "object_simple.string"
-        ColumnFieldObjectSimpleBool = "object_simple.bool"
-        ColumnFieldObjectSimpleBinary = "object_simple.binary"
-        ColumnFieldObjectSimpleDouble = "object_simple.double"
-        ColumnFieldObjectSimpleDataTime = "object_simple.data_time"
-        ColumnFieldObjectSimpleCreateAt = "object_simple.create_at"
-        ColumnFieldObjectSimplePointer = "object_simple.pointer"
-        ColumnFieldObjectSimpleDecimal = "object_simple.decimal"
-        ColumnFieldObjectSimpleInt32 = "object_simple.int32"
-        ColumnFieldObjectSimpleInt64 = "object_simple.int64"
-        ColumnFieldObjectSimpleJs = "object_simple.js"
-        ColumnFieldObjectSimpleJsScope = "object_simple.js_scope"
-        ColumnFieldObjectSimpleRegular = "object_simple.regular"
-        ColumnFieldObjectSimpleInt32s = "object_simple.int32s"
-        ColumnFieldObjectSimpleInt64s = "object_simple.int64s"
-        ColumnFieldObjectSimpleStrings = "object_simple.strings"
-        ColumnFieldObjectSimpleFloats = "object_simple.floats")
+	CollectionName                 = "user"
+	FieldId                        = "_id"
+	FieldString                    = "string"
+	FieldBool                      = "bool"
+	FieldBinary                    = "binary"
+	FieldDouble                    = "double"
+	FieldDataTime                  = "data_time"
+	FieldCreateAt                  = "create_at"
+	FieldPointer                   = "pointer"
+	FieldDecimal                   = "decimal"
+	FieldInt32                     = "int32"
+	FieldInt64                     = "int64"
+	FieldJs                        = "js"
+	FieldJsScope                   = "js_scope"
+	FieldRegular                   = "regular"
+	FieldInt32s                    = "int32s"
+	FieldInt64s                    = "int64s"
+	FieldStrings                   = "strings"
+	FieldFloats                    = "floats"
+	FieldArrayAny                  = "array_any"
+	FieldArrayobjectSimple         = "arrayobject_simple"
+	FieldArrayobjectSimpleId       = "arrayobject_simple._id"
+	FieldArrayobjectSimpleString   = "arrayobject_simple.string"
+	FieldArrayobjectSimpleBool     = "arrayobject_simple.bool"
+	FieldArrayobjectSimpleBinary   = "arrayobject_simple.binary"
+	FieldArrayobjectSimpleDouble   = "arrayobject_simple.double"
+	FieldArrayobjectSimpleDataTime = "arrayobject_simple.data_time"
+	FieldArrayobjectSimpleCreateAt = "arrayobject_simple.create_at"
+	FieldArrayobjectSimplePointer  = "arrayobject_simple.pointer"
+	FieldArrayobjectSimpleDecimal  = "arrayobject_simple.decimal"
+	FieldArrayobjectSimpleInt32    = "arrayobject_simple.int32"
+	FieldArrayobjectSimpleInt64    = "arrayobject_simple.int64"
+	FieldArrayobjectSimpleJs       = "arrayobject_simple.js"
+	FieldArrayobjectSimpleJsScope  = "arrayobject_simple.js_scope"
+	FieldArrayobjectSimpleRegular  = "arrayobject_simple.regular"
+	FieldArrayobjectSimpleInt32s   = "arrayobject_simple.int32s"
+	FieldArrayobjectSimpleInt64s   = "arrayobject_simple.int64s"
+	FieldArrayobjectSimpleStrings  = "arrayobject_simple.strings"
+	FieldArrayobjectSimpleFloats   = "arrayobject_simple.floats"
+	FieldObjectSimple              = "object_simple"
+	FieldObjectSimpleId            = "object_simple._id"
+	FieldObjectSimpleString        = "object_simple.string"
+	FieldObjectSimpleBool          = "object_simple.bool"
+	FieldObjectSimpleBinary        = "object_simple.binary"
+	FieldObjectSimpleDouble        = "object_simple.double"
+	FieldObjectSimpleDataTime      = "object_simple.data_time"
+	FieldObjectSimpleCreateAt      = "object_simple.create_at"
+	FieldObjectSimplePointer       = "object_simple.pointer"
+	FieldObjectSimpleDecimal       = "object_simple.decimal"
+	FieldObjectSimpleInt32         = "object_simple.int32"
+	FieldObjectSimpleInt64         = "object_simple.int64"
+	FieldObjectSimpleJs            = "object_simple.js"
+	FieldObjectSimpleJsScope       = "object_simple.js_scope"
+	FieldObjectSimpleRegular       = "object_simple.regular"
+	FieldObjectSimpleInt32s        = "object_simple.int32s"
+	FieldObjectSimpleInt64s        = "object_simple.int64s"
+	FieldObjectSimpleStrings       = "object_simple.strings"
+	FieldObjectSimpleFloats        = "object_simple.floats"
+)
+
 type UserData struct {
-        Id primitive.ObjectID `bson:"_id" json:"aaaa"`
-        String string `bson:"string" json:"s1"`
-        Bool bool `bson:"bool" json:"s1"`
-        Binary primitive.Binary `bson:"binary" json:"b1"`
-        Double float64 `bson:"double" json:"d1"`
-        DataTime primitive.DateTime `bson:"data_time" json:"aaaa"`
-        CreateAt primitive.Timestamp `bson:"create_at" json:"aaaa"`
-        Pointer primitive.DBPointer `bson:"pointer" json:"aaaa"`
-        Decimal primitive.Decimal128 `bson:"decimal" json:"aaaa"`
-        Int32 int32 `bson:"int32" json:"aaaa"`
-        Int64 int64 `bson:"int64" json:"aaaa"`
-        Js primitive.JavaScript `bson:"js" json:"aaaa"`
-        JsScope primitive.CodeWithScope `bson:"js_scope" json:"aaaa"`
-        Regular primitive.Regex `bson:"regular" json:"aaaa"`
-            Int32s []int32 `bson:"int32s" json:"aaaa"`
-            Int64s []int64 `bson:"int64s" json:"aaaa"`
-            Strings []string `bson:"strings" json:"aaaa"`
-            Floats []float64 `bson:"floats" json:"aaaa"`
-            ArrayobjectSimpleList []*UserArrayobjectSimpleData `bson:"arrayobject_simple" json:"aaaa"`
-        ObjectSimple *UserObjectSimpleData `bson:"object_simple" json:"aaaa"`
+	Id                    primitive.ObjectID           `bson:"_id" json:"aaaa"`
+	String                string                       `bson:"string" json:"s1"`
+	Bool                  bool                         `bson:"bool" json:"s1"`
+	Binary                primitive.Binary             `bson:"binary" json:"b1"`
+	Double                float64                      `bson:"double" json:"d1"`
+	DataTime              primitive.DateTime           `bson:"data_time" json:"aaaa"`
+	CreateAt              primitive.Timestamp          `bson:"create_at" json:"aaaa"`
+	Pointer               primitive.DBPointer          `bson:"pointer" json:"aaaa"`
+	Decimal               primitive.Decimal128         `bson:"decimal" json:"aaaa"`
+	Int32                 int32                        `bson:"int32" json:"aaaa"`
+	Int64                 int64                        `bson:"int64" json:"aaaa"`
+	Js                    primitive.JavaScript         `bson:"js" json:"aaaa"`
+	JsScope               primitive.CodeWithScope      `bson:"js_scope" json:"aaaa"`
+	Regular               primitive.Regex              `bson:"regular" json:"aaaa"`
+	Int32s                []int32                      `bson:"int32s" json:"aaaa"`
+	Int64s                []int64                      `bson:"int64s" json:"aaaa"`
+	Strings               []string                     `bson:"strings" json:"aaaa"`
+	Floats                []float64                    `bson:"floats" json:"aaaa"`
+	ArrayAny              []any                        `bson:"array_any" json:"aaaa"`
+	ArrayobjectSimpleList []*UserArrayobjectSimpleData `bson:"arrayobject_simple" json:"aaaa"`
+	ObjectSimple          *UserObjectSimpleData        `bson:"object_simple" json:"aaaa"`
 }
 type UserArrayobjectSimpleData struct {
-        Id primitive.ObjectID `bson:"_id" json:"aaaa"`
-        String string `bson:"string" json:"s1"`
-        Bool bool `bson:"bool" json:"s1"`
-        Binary primitive.Binary `bson:"binary" json:"b1"`
-        Double float64 `bson:"double" json:"d1"`
-        DataTime primitive.DateTime `bson:"data_time" json:"aaaa"`
-        CreateAt primitive.Timestamp `bson:"create_at" json:"aaaa"`
-        Pointer primitive.DBPointer `bson:"pointer" json:"aaaa"`
-        Decimal primitive.Decimal128 `bson:"decimal" json:"aaaa"`
-        Int32 int32 `bson:"int32" json:"aaaa"`
-        Int64 int64 `bson:"int64" json:"aaaa"`
-        Js primitive.JavaScript `bson:"js" json:"aaaa"`
-        JsScope primitive.CodeWithScope `bson:"js_scope" json:"aaaa"`
-        Regular primitive.Regex `bson:"regular" json:"aaaa"`
-            Int32s []int32 `bson:"int32s" json:"aaaa"`
-            Int64s []int64 `bson:"int64s" json:"aaaa"`
-            Strings []string `bson:"strings" json:"aaaa"`
-            Floats []float64 `bson:"floats" json:"aaaa"`
+	Id       primitive.ObjectID      `bson:"_id" json:"aaaa"`
+	String   string                  `bson:"string" json:"s1"`
+	Bool     bool                    `bson:"bool" json:"s1"`
+	Binary   primitive.Binary        `bson:"binary" json:"b1"`
+	Double   float64                 `bson:"double" json:"d1"`
+	DataTime primitive.DateTime      `bson:"data_time" json:"aaaa"`
+	CreateAt primitive.Timestamp     `bson:"create_at" json:"aaaa"`
+	Pointer  primitive.DBPointer     `bson:"pointer" json:"aaaa"`
+	Decimal  primitive.Decimal128    `bson:"decimal" json:"aaaa"`
+	Int32    int32                   `bson:"int32" json:"aaaa"`
+	Int64    int64                   `bson:"int64" json:"aaaa"`
+	Js       primitive.JavaScript    `bson:"js" json:"aaaa"`
+	JsScope  primitive.CodeWithScope `bson:"js_scope" json:"aaaa"`
+	Regular  primitive.Regex         `bson:"regular" json:"aaaa"`
+	Int32s   []int32                 `bson:"int32s" json:"aaaa"`
+	Int64s   []int64                 `bson:"int64s" json:"aaaa"`
+	Strings  []string                `bson:"strings" json:"aaaa"`
+	Floats   []float64               `bson:"floats" json:"aaaa"`
 }
 type UserObjectSimpleData struct {
-        Id primitive.ObjectID `bson:"_id" json:"aaaa"`
-        String string `bson:"string" json:"s1"`
-        Bool bool `bson:"bool" json:"s1"`
-        Binary primitive.Binary `bson:"binary" json:"b1"`
-        Double float64 `bson:"double" json:"d1"`
-        DataTime primitive.DateTime `bson:"data_time" json:"aaaa"`
-        CreateAt primitive.Timestamp `bson:"create_at" json:"aaaa"`
-        Pointer primitive.DBPointer `bson:"pointer" json:"aaaa"`
-        Decimal primitive.Decimal128 `bson:"decimal" json:"aaaa"`
-        Int32 int32 `bson:"int32" json:"aaaa"`
-        Int64 int64 `bson:"int64" json:"aaaa"`
-        Js primitive.JavaScript `bson:"js" json:"aaaa"`
-        JsScope primitive.CodeWithScope `bson:"js_scope" json:"aaaa"`
-        Regular primitive.Regex `bson:"regular" json:"aaaa"`
-            Int32s []int32 `bson:"int32s" json:"aaaa"`
-            Int64s []int64 `bson:"int64s" json:"aaaa"`
-            Strings []string `bson:"strings" json:"aaaa"`
-            Floats []float64 `bson:"floats" json:"aaaa"`
+	Id       primitive.ObjectID      `bson:"_id" json:"aaaa"`
+	String   string                  `bson:"string" json:"s1"`
+	Bool     bool                    `bson:"bool" json:"s1"`
+	Binary   primitive.Binary        `bson:"binary" json:"b1"`
+	Double   float64                 `bson:"double" json:"d1"`
+	DataTime primitive.DateTime      `bson:"data_time" json:"aaaa"`
+	CreateAt primitive.Timestamp     `bson:"create_at" json:"aaaa"`
+	Pointer  primitive.DBPointer     `bson:"pointer" json:"aaaa"`
+	Decimal  primitive.Decimal128    `bson:"decimal" json:"aaaa"`
+	Int32    int32                   `bson:"int32" json:"aaaa"`
+	Int64    int64                   `bson:"int64" json:"aaaa"`
+	Js       primitive.JavaScript    `bson:"js" json:"aaaa"`
+	JsScope  primitive.CodeWithScope `bson:"js_scope" json:"aaaa"`
+	Regular  primitive.Regex         `bson:"regular" json:"aaaa"`
+	Int32s   []int32                 `bson:"int32s" json:"aaaa"`
+	Int64s   []int64                 `bson:"int64s" json:"aaaa"`
+	Strings  []string                `bson:"strings" json:"aaaa"`
+	Floats   []float64               `bson:"floats" json:"aaaa"`
 }
 
 func (d UserData) Document() any {
-    return d
+	return d
 }
 func (d UserData) Update() {}
 
 type UserClient struct {
-    c  *mongo.Client
-    db string
+	c  *mongo.Client
+	db string
 }
 
 func NewUserClient(db *mongo.Client) *UserClient {
-    return &UserClient{
-        c: db,
-    }
+	return &UserClient{
+		c: db,
+	}
 }
 
-func (c *UserClient) DBName(database string) *UserClient {
-    c.db = database
-    return c
+func (c *UserClient) Database(database string) *UserClient {
+	c.db = database
+	return c
 }
 
 func (c *UserClient) collection() *mongo.Collection {
-    if len(c.db) == 0 {
-      panic(errors.New("db not set"))
-    }
+	if len(c.db) == 0 {
+		panic(errors.New("db not set"))
+	}
 
-    return c.c.Database(c.db).Collection(CollectionName)
+	return c.c.Database(c.db).Collection(CollectionName)
 }
 
 func (c *UserClient) Query() *UserQuery {
@@ -218,7 +222,7 @@ func (c *UserClient) Name() string {
 	return c.collection().Name()
 }
 
-func (c *UserClient) Database() *mongo.Database {
+func (c *UserClient) GetDatabase() *mongo.Database {
 	return c.collection().Database()
 }
 

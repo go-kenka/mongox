@@ -4,7 +4,7 @@ import (
 	"time"
 
 	bsonx2 "github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/model/aggregates"
+	"github.com/go-kenka/mongox/internal/options"
 )
 
 type DensifyRange interface {
@@ -26,13 +26,13 @@ func RangeWithStep(l, u, step int) NumberDensifyRange {
 		Append("step", step), nil)
 }
 
-func DateFullRangeWithStep(step int64, unit aggregates.MongoTimeUnit) DateDensifyRange {
+func DateFullRangeWithStep(step int64, unit options.MongoTimeUnit) DateDensifyRange {
 	return NewDensifyConstructibleBson(bsonx2.BsonDoc("bounds", bsonx2.String("partition")).
 		Append("step", bsonx2.Int64(step)).
 		Append("unit", bsonx2.String(unit.GetValue())), nil)
 }
 
-func DateRangeWithStep(l, u time.Duration, step int64, unit aggregates.MongoTimeUnit) NumberDensifyRange {
+func DateRangeWithStep(l, u time.Duration, step int64, unit options.MongoTimeUnit) NumberDensifyRange {
 	return NewDensifyConstructibleBson(bsonx2.Doc("bounds", []any{l, u}).
 		Append("step", step).
 		Append("unit", unit.GetValue()), nil)

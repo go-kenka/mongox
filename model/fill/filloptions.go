@@ -2,6 +2,7 @@ package fill
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"github.com/go-kenka/mongox/internal/expression"
 )
 
 var (
@@ -14,7 +15,7 @@ var (
 
 type FillOptions interface {
 	bsonx.Bson
-	PartitionBy(expression bsonx.Expression) FillOptions
+	PartitionBy(expression expression.AnyExpression) FillOptions
 	PartitionByFields(fields ...string) FillOptions
 	SortBy(sortBy bsonx.Bson) FillOptions
 	Option(name string, value any) FillOptions

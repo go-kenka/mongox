@@ -2,8 +2,9 @@ package aggregates
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
+	"github.com/go-kenka/mongox/internal/expression"
 	"github.com/go-kenka/mongox/model/aggregates/operators/window"
+	utils "github.com/go-kenka/mongox/uitls"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -76,7 +77,7 @@ func NewSetWindowFieldsStage[T expression.AnyExpression, O window.WindowOutputFi
 func (f setWindowFieldsStage[T, O]) BsonDocument() *bsonx.BsonDocument {
 	b := bsonx.BsonEmpty()
 	data := bsonx.BsonEmpty()
-	if f.partitionBy != nil {
+	if !utils.IsZero(f.partitionBy) {
 		data.Append("partitionBy", f.partitionBy)
 	}
 	if f.sortBy != nil {

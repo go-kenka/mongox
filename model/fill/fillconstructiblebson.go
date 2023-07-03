@@ -2,15 +2,16 @@ package fill
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"github.com/go-kenka/mongox/internal/expression"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type FillConstructibleBson struct {
 	base     bsonx.Bson
-	appended bsonx.Document
+	appended *bsonx.Document
 }
 
-func NewFillConstructibleBson(base bsonx.Bson, appended bsonx.Document) FillConstructibleBson {
+func NewFillConstructibleBson(base bsonx.Bson, appended *bsonx.Document) FillConstructibleBson {
 	a := FillConstructibleBson{
 		base:     base,
 		appended: EmptyDoc,
@@ -42,13 +43,13 @@ func (a FillConstructibleBson) newAppended(name string, value any) FillConstruct
 	return a.newMutated(bsonx.Doc(name, value))
 }
 
-func (a FillConstructibleBson) newMutated(d bsonx.Document) FillConstructibleBson {
+func (a FillConstructibleBson) newMutated(d *bsonx.Document) FillConstructibleBson {
 	newAppended := bsonx.Empty()
-	for k, v := range a.appended {
-		newAppended.Append(k, v)
+	for _, v := range a.appended.Document() {
+		newAppended.Append(v.Key, v.Value)
 	}
-	for k, v := range d {
-		newAppended.Append(k, v)
+	for _, v := range d.Document() {
+		newAppended.Append(v.Key, v.Value)
 	}
 
 	return FillConstructibleBson{
@@ -71,7 +72,7 @@ func (a FillConstructibleBson) remove(key string) FillConstructibleBson {
 	return FillConstructibleBson{base: doc, appended: a.appended}
 }
 
-func (a FillConstructibleBson) PartitionBy(expression bsonx.Expression) FillOptions {
+func (a FillConstructibleBson) PartitionBy(expression expression.AnyExpression) FillOptions {
 	doc := bsonx.Empty()
 	a.remove("partitionByFields")
 	doc.Append("partitionBy", expression)

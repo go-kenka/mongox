@@ -104,14 +104,14 @@ func (a *UserAggregate) Save(ctx context.Context) error {
 }
 
 // Find get result as slice
-func (a *UserAggregate) Find(ctx context.Context, val []any) (err error) {
+func (a *UserAggregate) Find(ctx context.Context, val interface{}) (err error) {
 	cursor, err := a.cc.Aggregate(ctx, a.pipe, a.opts)
 	if err != nil {
 		return err
 	}
 	defer cursor.Close(ctx)
 
-	err = cursor.All(ctx, &val)
+	err = cursor.All(ctx, val)
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func (a *UserAggregate) FindOne(ctx context.Context, val interface{}) (err error
 	}
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
-		err = cursor.Decode(&val)
+		err = cursor.Decode(val)
 		if err != nil {
 			return err
 		}

@@ -17,7 +17,7 @@ const (
     {{- $paths := .PathList }}
     {{- $names := .FieldNames }}
     {{- range $i,$n :=$names}}
-        Column{{ $n }} = "{{index $paths $i}}"
+        {{ $n }} = "{{index $paths $i}}"
     {{- end -}}
 )
 
@@ -25,10 +25,14 @@ const (
 type {{ $o.Name }}Data struct {
 {{- range $j,$f := $o.Fields }}
     {{- if and (eq $f.FieldType 4) }}
-        {{- if eq $f.ArrayType 0 }}
+        {{- if gt (len $f.EmbedData) 0 }}
             {{$f.Name | camelCase }}List []*{{$o.Name}}{{$f.Name | camelCase }}Data `bson:"{{$f.Name}}" {{$f.Tag}}`
         {{- else}}
-            {{$f.Name | camelCase }} []{{$f.ArrayType | goType}} `bson:"{{$f.Name}}" {{$f.Tag}}`
+            {{- if eq $f.ArrayType 0 }}
+                {{$f.Name | camelCase }} []any `bson:"{{$f.Name}}" {{$f.Tag}}`
+            {{- else}}
+                {{$f.Name | camelCase }} []{{$f.ArrayType | goType}} `bson:"{{$f.Name}}" {{$f.Tag}}`
+            {{- end}}
         {{- end}}
     {{- else if eq $f.FieldType 3 }}
         {{$f.Name | camelCase }} *{{$o.Name}}{{$f.Name | camelCase }}Data `bson:"{{$f.Name}}" {{$f.Tag}}`
@@ -55,7 +59,7 @@ func New{{.Name}}Client(db *mongo.Client) *{{.Name}}Client {
     }
 }
 
-func (c *{{.Name}}Client) DBName(database string) *{{.Name}}Client {
+func (c *{{.Name}}Client) Database(database string) *{{.Name}}Client {
     c.db = database
     return c
 }
@@ -124,7 +128,7 @@ func (c *{{.Name}}Client) Name() string {
 	return c.collection().Name()
 }
 
-func (c *{{.Name}}Client) Database() *mongo.Database {
+func (c *{{.Name}}Client) GetDatabase() *mongo.Database {
 	return c.collection().Database()
 }
 

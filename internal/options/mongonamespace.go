@@ -1,4 +1,4 @@
-package aggregates
+package options
 
 import "strings"
 
@@ -10,8 +10,8 @@ type MongoNamespace struct {
 
 func NewMongoNamespace(fullName string) MongoNamespace {
 	return MongoNamespace{
-		databaseName:   getDatatabaseNameFromFullName(fullName),
-		collectionName: getCollectionNameFullName(fullName),
+		databaseName:   GetDatatabaseNameFromFullName(fullName),
+		collectionName: GetCollectionNameFullName(fullName),
 		fullName:       fullName,
 	}
 }
@@ -24,7 +24,7 @@ func NewMongoNamespaceWithDB(databaseName, collectionName string) MongoNamespace
 	}
 }
 
-func getCollectionNameFullName(namespace string) string {
+func GetCollectionNameFullName(namespace string) string {
 	firstDot := strings.Index(namespace, ".")
 	if firstDot == -1 {
 		return namespace
@@ -33,11 +33,19 @@ func getCollectionNameFullName(namespace string) string {
 	return namespace[firstDot+1:]
 }
 
-func getDatatabaseNameFromFullName(namespace string) string {
+func GetDatatabaseNameFromFullName(namespace string) string {
 	firstDot := strings.Index(namespace, ".")
 	if firstDot == -1 {
 		return ""
 	}
 
 	return namespace[:firstDot]
+}
+
+func (m *MongoNamespace) DatabaseName() string {
+	return m.databaseName
+}
+
+func (m *MongoNamespace) CollectionName() string {
+	return m.collectionName
 }

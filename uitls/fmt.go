@@ -14,7 +14,7 @@ func GoFmt(p string) error {
 	root, _ := os.Getwd()
 	p = filepath.Join(root, p)
 
-	cmd := exec.Command("gofmt", "-s", "-w", ".")
+	cmd := exec.Command("gofmt", "-s", "-w", p)
 	err := cmd.Run()
 	if err != nil {
 		return err

@@ -2,8 +2,8 @@ package projections
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
-	"github.com/go-kenka/mongox/model/aggregates"
+	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/filter"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -20,7 +20,7 @@ func (p fields) Pro() *bsonx.BsonDocument {
 }
 
 func Computed[E expression.AnyExpression](fieldName string, expression E) fields {
-	return fields{doc: aggregates.NewSimpleFilter(fieldName, expression)}
+	return fields{doc: filter.NewSimpleFilter(fieldName, expression)}
 }
 
 func ComputedSearchMeta(fieldName string) fields {

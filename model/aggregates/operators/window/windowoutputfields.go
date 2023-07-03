@@ -2,8 +2,9 @@ package window
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
-	"github.com/go-kenka/mongox/model/aggregates"
+	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/options"
+	utils "github.com/go-kenka/mongox/uitls"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -52,7 +53,7 @@ func BottomN[I expression.AnyExpression, O expression.AnyExpression, N expressio
 // Count Returns the number of documents in the group or window. Distinct from
 // the $count pipeline stage. NewDefaultStage in version 5.0.
 func Count(path string, window Window) outputOperator {
-	return simpleParameterWindowFunction(path, "$count", nil, window)
+	return simpleParameterWindowFunction(path, "$count", utils.Nil[expression.AnyExpression](), window)
 }
 
 // CovariancePop Returns the population covariance of two numeric expressions.
@@ -77,7 +78,7 @@ func CovarianceSamp[T expression.AnyExpression](path string, expr1, expr2 T, win
 // documents in the $setWindowFields stage partition. There are no gaps in the
 // ranks. Ties receive the same rank. NewDefaultStage in version 5.0.
 func DenseRank(path string) outputOperator {
-	return simpleParameterWindowFunction(path, "$denseRank", nil, nil)
+	return simpleParameterWindowFunction(path, "$denseRank", utils.Nil[expression.AnyExpression](), nil)
 }
 
 // Derivative Returns the average rate of change within the specified window. NewDefaultStage
@@ -90,7 +91,7 @@ func Derivative[I expression.AnyExpression](path string, in I, window Window) ou
 
 // TimeDerivative Returns the average rate of change within the specified window. NewDefaultStage
 // in version 5.0.
-func TimeDerivative[T expression.AnyExpression](path string, e T, window Window, unit aggregates.MongoTimeUnit) outputOperator {
+func TimeDerivative[T expression.AnyExpression](path string, e T, window Window, unit options.MongoTimeUnit) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
 	args[Input] = e
 	args[Unit] = bsonx.String(unit.GetValue())
@@ -101,7 +102,7 @@ func TimeDerivative[T expression.AnyExpression](path string, e T, window Window,
 // $setWindowFields stage partition. Ties result in different adjacent document
 // numbers. NewDefaultStage in version 5.0.
 func DocumentNumber(path string) outputOperator {
-	return simpleParameterWindowFunction(path, "$documentNumber", nil, nil)
+	return simpleParameterWindowFunction(path, "$documentNumber", utils.Nil[expression.AnyExpression](), nil)
 }
 
 // ExpMovingAvg Returns the exponential moving average for the numeric
@@ -139,7 +140,7 @@ func Integral[T expression.AnyExpression](path string, e T, window Window) outpu
 
 // TimeIntegral Returns the approximation of the area under a curve.
 // NewDefaultStage in version 5.0.
-func TimeIntegral[T expression.AnyExpression](path string, e T, window Window, unit aggregates.MongoTimeUnit) outputOperator {
+func TimeIntegral[T expression.AnyExpression](path string, e T, window Window, unit options.MongoTimeUnit) outputOperator {
 	args := make(map[ParamName]expression.AnyExpression)
 	args[Input] = e
 	args[Unit] = bsonx.String(unit.GetValue())
@@ -204,17 +205,17 @@ func Push[T expression.AnyExpression](path string, e T, window Window) outputOpe
 // documents in the $setWindowFields stage partition.
 // NewDefaultStage in version 5.0.
 func Rank(path string) outputOperator {
-	return simpleParameterWindowFunction(path, "$rank", nil, nil)
+	return simpleParameterWindowFunction(path, "$rank", utils.Nil[expression.AnyExpression](), nil)
 }
 
 // Shift Returns the value from an expression applied to a document in a specified
 // position relative to the current document in the $setWindowFields stage
 // partition. NewDefaultStage in version 5.0.
 func Shift[T expression.AnyExpression](path string, e, defaultExpression T, by int32) outputOperator {
-	args := make(map[ParamName]expression.AnyExpression)
+	args := make(map[ParamName]expression.Expression)
 	args[Output] = e
 	args[By] = bsonx.Int32(by)
-	if defaultExpression != nil {
+	if !utils.IsZero(defaultExpression) {
 		args[Default] = defaultExpression
 	}
 	return compoundParameterWindowFunction(path, "$shift", args, nil)
@@ -260,7 +261,7 @@ func TopN[O expression.AnyExpression, N expression.IntExpression](path string, s
 	return compoundParameterWindowFunction(path, "$topN", args, window)
 }
 
-func simpleParameterWindowFunction[T expression.Expression](path, functionName string, e T, window Window) outputOperator {
+func simpleParameterWindowFunction[T expression.AnyExpression](path, functionName string, e T, window Window) outputOperator {
 	return outputField(path, NewSimpleParameterFunctionAndWindow[T](functionName, e, window))
 }
 func compoundParameterWindowFunction[T expression.Expression](path, functionName string, args map[ParamName]T, window Window) outputOperator {
@@ -273,12 +274,12 @@ func outputField[T expression.Expression](path string, win T) outputOperator {
 	}
 }
 
-type SimpleParameterFunctionAndWindow[T expression.Expression] struct {
+type SimpleParameterFunctionAndWindow[T expression.AnyExpression] struct {
 	AbstractFunctionAndWindow
 	expression T
 }
 
-func NewSimpleParameterFunctionAndWindow[T expression.Expression](functionName string, expression T, window Window) SimpleParameterFunctionAndWindow[T] {
+func NewSimpleParameterFunctionAndWindow[T expression.AnyExpression](functionName string, expression T, window Window) SimpleParameterFunctionAndWindow[T] {
 	return SimpleParameterFunctionAndWindow[T]{
 		AbstractFunctionAndWindow: NewAbstractFunctionAndWindow(functionName, window),
 		expression:                expression,
@@ -291,7 +292,7 @@ func (a SimpleParameterFunctionAndWindow[T]) Exp() bsonx.IBsonValue {
 
 func (a SimpleParameterFunctionAndWindow[T]) BsonDocument() *bsonx.BsonDocument {
 	doc := bsonx.BsonEmpty()
-	if a.expression != nil {
+	if !utils.IsZero(a.expression) {
 		doc.Append(a.functionName, a.expression.Exp())
 	} else {
 		doc.Append(a.functionName, bsonx.BsonEmpty())

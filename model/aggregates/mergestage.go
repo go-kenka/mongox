@@ -2,7 +2,7 @@ package aggregates
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/options"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -60,10 +60,10 @@ func Merge(collectionName string, options options.MergeOptions) MergeStage {
 // Can output to a sharded collection. Input collection can also be sharded. For
 // a comparison with the $out DefaultStage which also outputs the aggregation results
 // to a collection, see $merge and $out Comparison.
-func MergeWithNameSpace(namespace MongoNamespace, options options.MergeOptions) MergeStage {
+func MergeWithNameSpace(namespace options.MongoNamespace, options options.MergeOptions) MergeStage {
 	return MergeStage{stage: NewMergeStage(
-		bsonx.BsonDoc("db", bsonx.String(namespace.databaseName)).
-			Append("coll", bsonx.String(namespace.collectionName)),
+		bsonx.BsonDoc("db", bsonx.String(namespace.DatabaseName())).
+			Append("coll", bsonx.String(namespace.CollectionName())),
 		options,
 	)}
 }

@@ -4,7 +4,8 @@ import (
 	"strings"
 
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/options"
+	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -190,13 +191,13 @@ func (s simpleFilter) Document() bson.D {
 	return s.BsonDocument().Document()
 }
 
-type operatorFilter[T bsonx.Expression] struct {
+type operatorFilter[T expression.AnyExpression] struct {
 	operatorName string
 	fieldName    string
 	value        T
 }
 
-func newOperatorFilter[T bsonx.Expression](operatorName string, fieldName string, value T) operatorFilter[T] {
+func newOperatorFilter[T expression.AnyExpression](operatorName string, fieldName string, value T) operatorFilter[T] {
 	return operatorFilter[T]{
 		operatorName: operatorName,
 		fieldName:    fieldName,
@@ -214,13 +215,13 @@ func (s operatorFilter[T]) Document() bson.D {
 	return s.BsonDocument().Document()
 }
 
-type iterableOperatorFilter[T bsonx.Expression] struct {
+type iterableOperatorFilter[T expression.AnyExpression] struct {
 	operatorName string
 	fieldName    string
 	values       []T
 }
 
-func newIterableOperatorFilter[T bsonx.Expression](fieldName string, operatorName string, values []T) iterableOperatorFilter[T] {
+func newIterableOperatorFilter[T expression.AnyExpression](fieldName string, operatorName string, values []T) iterableOperatorFilter[T] {
 	return iterableOperatorFilter[T]{
 		operatorName: operatorName,
 		fieldName:    fieldName,
@@ -243,12 +244,12 @@ func (s iterableOperatorFilter[T]) Document() bson.D {
 	return s.BsonDocument().Document()
 }
 
-type simpleEncodingFilter[T bsonx.Expression] struct {
+type simpleEncodingFilter[T expression.AnyExpression] struct {
 	fieldName string
 	value     T
 }
 
-func newSimpleEncodingFilter[T bsonx.Expression](fieldName string, value T) simpleEncodingFilter[T] {
+func newSimpleEncodingFilter[T expression.AnyExpression](fieldName string, value T) simpleEncodingFilter[T] {
 	return simpleEncodingFilter[T]{
 		fieldName: fieldName,
 		value:     value,
@@ -263,7 +264,7 @@ func (s simpleEncodingFilter[T]) Document() bson.D {
 	return s.BsonDocument().Document()
 }
 
-type geometryOperatorFilter[T bsonx.Expression] struct {
+type geometryOperatorFilter[T expression.AnyExpression] struct {
 	fieldName    string
 	operatorName string
 	geometry     T
@@ -271,7 +272,7 @@ type geometryOperatorFilter[T bsonx.Expression] struct {
 	minDistance  float64
 }
 
-func newGeometryOperatorFilter[T bsonx.Expression](
+func newGeometryOperatorFilter[T expression.AnyExpression](
 	fieldName string,
 	operatorName string,
 	geometry T,

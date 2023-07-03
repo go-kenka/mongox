@@ -1,4 +1,4 @@
-package aggregates
+package options
 
 type BucketGranularity string
 

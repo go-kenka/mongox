@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/go-kenka/esql v1.0.5
 	github.com/gobeam/stringy v0.0.6
+	github.com/google/uuid v1.3.0
 	github.com/samber/lo v1.38.1
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2

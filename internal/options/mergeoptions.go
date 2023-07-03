@@ -1,8 +1,7 @@
 package options
 
 import (
-	"github.com/go-kenka/mongox/bsonx/expression"
-	"github.com/go-kenka/mongox/model/aggregates"
+	"github.com/go-kenka/mongox/internal/expression"
 )
 
 type WhenMatched uint8
@@ -46,7 +45,7 @@ var (
 type MergeOptions struct {
 	uniqueIdentifier    []string
 	whenMatched         WhenMatched
-	variables           []aggregates.Variable[expression.AnyExpression]
+	variables           []Variable[expression.AnyExpression]
 	whenMatchedPipeline []bool
 	whenNotMatched      WhenNotMatched
 }
@@ -59,7 +58,7 @@ func (o MergeOptions) WhenMatched() WhenMatched {
 	return o.whenMatched
 }
 
-func (o MergeOptions) Variables() []aggregates.Variable[expression.AnyExpression] {
+func (o MergeOptions) Variables() []Variable[expression.AnyExpression] {
 	return o.variables
 }
 

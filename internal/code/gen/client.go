@@ -51,6 +51,7 @@ func GenClient(fullPath string, spec *load.SchemaSpec) error {
 	tmp.Funcs(template.FuncMap{
 		"camelCase": CamelCase,
 		"lower":     Lower,
+		"pkgName":   GetPackageName,
 	})
 	tmp, err := tmp.ParseFS(tmpl, "template/client.tmpl")
 	if err != nil {

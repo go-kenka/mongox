@@ -5,7 +5,7 @@ package set
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
+	"github.com/go-kenka/mongox/internal/expression"
 )
 
 type setOperator struct {

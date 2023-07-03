@@ -1,4 +1,4 @@
-package aggregates
+package options
 
 type MongoTimeUnit struct {
 	value string

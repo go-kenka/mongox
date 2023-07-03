@@ -2,13 +2,14 @@ package fill
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"github.com/go-kenka/mongox/internal/expression"
 )
 
 type FillOutputField interface {
 	bsonx.Bson
 }
 
-func Value(field string, expression bsonx.Expression) ValueFillOutputField {
+func Value(field string, expression expression.AnyExpression) ValueFillOutputField {
 	return NewFillConstructibleBsonElement(field, bsonx.Doc("value", expression), FillConstructibleBson{})
 }
 

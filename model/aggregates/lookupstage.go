@@ -2,7 +2,8 @@ package aggregates
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
+	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -76,20 +77,20 @@ func Lookup(from, localField, foreignField, as string) LookupStage {
 //	        as: <output array field>
 //	     }
 //	}
-func LookupWithPipe[T expression.AnyExpression](from, as string, let []Variable[T], pipeline []bsonx.Bson) LookupStage {
+func LookupWithPipe[T expression.AnyExpression](from, as string, let []options.Variable[T], pipeline []bsonx.Bson) LookupStage {
 	return LookupStage{stage: NewLookupStage(from, let, pipeline, as)}
 }
 
 type lookupStage[T expression.AnyExpression] struct {
 	from     string
-	let      []Variable[T]
+	let      []options.Variable[T]
 	pipeline []bsonx.Bson
 	as       string
 }
 
 func NewLookupStage[T expression.AnyExpression](
 	from string,
-	let []Variable[T],
+	let []options.Variable[T],
 	pipeline []bsonx.Bson,
 	as string,
 ) lookupStage[T] {

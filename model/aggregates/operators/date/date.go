@@ -3,8 +3,9 @@ package date
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
-	"github.com/go-kenka/mongox/model/aggregates"
+	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/filter"
+	"github.com/go-kenka/mongox/internal/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -30,14 +31,14 @@ func (o dateOperator) Exp() bsonx.IBsonValue {
 //	}
 //
 // Returns a Date. The startDate can be any expression that resolves to type Date, Timestamp or ObjectId. No matter which data type is used as input, the value returned will be a Date object.
-func DateAdd[T expression.DateExpression, N expression.NumberExpression](startDate T, unit aggregates.MongoTimeUnit, amount N, options DateOptions) dateOperator {
+func DateAdd[T expression.DateExpression, N expression.NumberExpression](startDate T, unit options.MongoTimeUnit, amount N, options DateOptions) dateOperator {
 	doc := bsonx.BsonDoc("startDate", startDate)
 	doc.Append("unit", bsonx.String(unit.GetValue()))
 	doc.Append("amount", amount)
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateAdd", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateAdd", doc)}
 }
 
 // DateDiff NewDefaultStage in version 5.0.
@@ -55,7 +56,7 @@ func DateAdd[T expression.DateExpression, N expression.NumberExpression](startDa
 //	}
 //
 // Subtracts startDate from endDate. Returns an integer in the specified unit.
-func DateDiff[T expression.DateExpression, N expression.NumberExpression](startDate, endDate T, unit aggregates.MongoTimeUnit, amount N, options DateDiffOptions) dateOperator {
+func DateDiff[T expression.DateExpression, N expression.NumberExpression](startDate, endDate T, unit options.MongoTimeUnit, amount N, options DateDiffOptions) dateOperator {
 	doc := bsonx.BsonDoc("startDate", startDate)
 	doc.Append("endDate", endDate)
 	doc.Append("unit", bsonx.String(unit.GetValue()))
@@ -66,7 +67,7 @@ func DateDiff[T expression.DateExpression, N expression.NumberExpression](startD
 	if options.startOfWeek != "" {
 		doc.Append("startOfWeek", bsonx.String(options.startOfWeek.String()))
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateDiff", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateDiff", doc)}
 }
 
 // DateFromParts Constructs and returns a Date object given the date's constituent properties.
@@ -103,7 +104,7 @@ func DateFromParts(year int32, options DateFromPartsOptions) dateOperator {
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateFromParts", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateFromParts", doc)}
 }
 
 // DateFromPartsIso Constructs and returns a Date object given the date's constituent properties.
@@ -139,7 +140,7 @@ func DateFromPartsIso(isoWeekYear int32, options DateFromPartsOptions) dateOpera
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateFromParts", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateFromParts", doc)}
 }
 
 // DateFromString Converts a date/time string to a date object.
@@ -167,7 +168,7 @@ func DateFromString(dateString string, options DateFromStringOptions) dateOperat
 	if options.onNull != nil {
 		doc.Append("onNull", options.onNull.BsonDocument())
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateFromString", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateFromString", doc)}
 }
 
 // DateSubtract NewDefaultStage in version 5.0.
@@ -184,14 +185,14 @@ func DateFromString(dateString string, options DateFromStringOptions) dateOperat
 //	}
 //
 // Returns a Date. The startDate can be any expression that resolves to type Date, Timestamp or ObjectId. No matter which data type is used as input, the value returned will be a Date object.
-func DateSubtract[T expression.DateExpression, N expression.NumberExpression](startDate T, unit aggregates.MongoTimeUnit, amount N, options DateOptions) dateOperator {
+func DateSubtract[T expression.DateExpression, N expression.NumberExpression](startDate T, unit options.MongoTimeUnit, amount N, options DateOptions) dateOperator {
 	doc := bsonx.BsonDoc("startDate", startDate)
 	doc.Append("unit", bsonx.String(unit.GetValue()))
 	doc.Append("amount", amount)
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateSubtract", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateSubtract", doc)}
 }
 
 // DateToParts Returns a document that contains the constituent parts of a given BSON Date value as individual properties. The properties returned are year, month, day, hour, minute, second and millisecond.
@@ -213,7 +214,7 @@ func DateToParts[T expression.DateExpression](date T, options DateToPartsOptions
 	if options.timezone != "" {
 		doc.Append("timezone", bsonx.String(options.timezone))
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateSubtract", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateSubtract", doc)}
 }
 
 type DateToStringOptions struct {
@@ -242,7 +243,7 @@ func DateToString[T expression.DateExpression](date T, options DateToStringOptio
 	if options.onNull != nil {
 		doc.Append("onNull", options.onNull.BsonDocument())
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateToString", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateToString", doc)}
 }
 
 // DateTrunc NewDefaultStage in version 5.0.
@@ -258,7 +259,7 @@ func DateToString[T expression.DateExpression](date T, options DateToStringOptio
 //	     startOfWeek: <Expression>
 //	  }
 //	}
-func DateTrunc[T expression.DateExpression](date T, unit aggregates.MongoTimeUnit, options DateTruncOptions) dateOperator {
+func DateTrunc[T expression.DateExpression](date T, unit options.MongoTimeUnit, options DateTruncOptions) dateOperator {
 	doc := bsonx.BsonDoc("date", date)
 	doc.Append("unit", bsonx.String(unit.GetValue()))
 	if options.binSize > 0 {
@@ -270,7 +271,7 @@ func DateTrunc[T expression.DateExpression](date T, unit aggregates.MongoTimeUni
 	if options.startOfWeek != "" {
 		doc.Append("startOfWeek", bsonx.String(options.startOfWeek.String()))
 	}
-	return dateOperator{doc: aggregates.NewSimpleFilter("$dateTrunc", doc)}
+	return dateOperator{doc: filter.NewSimpleFilter("$dateTrunc", doc)}
 }
 
 // DayOfMonth Returns the day of the month for a date as a number between 1 and 31.

@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"path"
 	"strings"
 
 	"github.com/go-kenka/mongox/types"
@@ -16,4 +17,9 @@ func Lower(str string) string {
 
 func GoType(t types.MongoType) string {
 	return TypeGoNames[t]
+}
+
+func GetPackageName(p string) string {
+	_, s := path.Split(p)
+	return s
 }

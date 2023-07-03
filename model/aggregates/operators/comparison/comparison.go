@@ -5,8 +5,8 @@ package comparison
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
-	"github.com/go-kenka/mongox/bsonx/expression"
-	"github.com/go-kenka/mongox/model/aggregates"
+	"github.com/go-kenka/mongox/internal/expression"
+	"github.com/go-kenka/mongox/internal/filter"
 )
 
 type comparisonOperator struct {
@@ -26,7 +26,7 @@ func (o comparisonOperator) Exp() bsonx.IBsonValue {
 // $cmp has the following syntax:
 // { $cmp: [ <expression1>, <expression2> ] }
 func Cmp[T expression.AnyExpression](fieldName string, e1, e2 T) comparisonOperator {
-	return comparisonOperator{doc: aggregates.NewSimpleFilter(fieldName, bsonx.BsonDoc("$cmp", bsonx.Array(e1, e2)))}
+	return comparisonOperator{doc: filter.NewSimpleFilter(fieldName, bsonx.BsonDoc("$cmp", bsonx.Array(e1, e2)))}
 }
 
 // Eq Compares two values and returns:
@@ -36,7 +36,7 @@ func Cmp[T expression.AnyExpression](fieldName string, e1, e2 T) comparisonOpera
 // $eq has the following syntax:
 // { $eq: [ <expression1>, <expression2> ] }
 func Eq[T expression.AnyExpression](fieldName string, value T) comparisonOperator {
-	return comparisonOperator{doc: aggregates.NewSimpleFilter(fieldName, value)}
+	return comparisonOperator{doc: filter.NewSimpleFilter(fieldName, value)}
 }
 
 // Ne Compares two values and returns:
@@ -46,7 +46,7 @@ func Eq[T expression.AnyExpression](fieldName string, value T) comparisonOperato
 // $ne has the following syntax:
 // { $ne: [ <expression1>, <expression2> ] }
 func Ne[T expression.AnyExpression](fieldName string, value T) comparisonOperator {
-	return comparisonOperator{doc: aggregates.NewOperatorFilter("$ne", fieldName, value)}
+	return comparisonOperator{doc: filter.NewOperatorFilter("$ne", fieldName, value)}
 }
 
 // Gt Compares two values and returns:
@@ -56,7 +56,7 @@ func Ne[T expression.AnyExpression](fieldName string, value T) comparisonOperato
 // $gt has the following syntax:
 // { $gt: [ <expression1>, <expression2> ] }
 func Gt[T expression.AnyExpression](fieldName string, value T) comparisonOperator {
-	return comparisonOperator{doc: aggregates.NewOperatorFilter("$gt", fieldName, value)}
+	return comparisonOperator{doc: filter.NewOperatorFilter("$gt", fieldName, value)}
 }
 
 // Lt Compares two values and returns:
@@ -66,7 +66,7 @@ func Gt[T expression.AnyExpression](fieldName string, value T) comparisonOperato
 // $lt has the following syntax:
 // { $lt: [ <expression1>, <expression2> ] }
 func Lt[T expression.AnyExpression](fieldName string, value T) comparisonOperator {
-	return comparisonOperator{doc: aggregates.NewOperatorFilter("$lt", fieldName, value)}
+	return comparisonOperator{doc: filter.NewOperatorFilter("$lt", fieldName, value)}
 }
 
 // Gte Compares two values and returns:
@@ -76,7 +76,7 @@ func Lt[T expression.AnyExpression](fieldName string, value T) comparisonOperato
 // $gte has the following syntax:
 // { $gte: [ <expression1>, <expression2> ] }
 func Gte[T expression.AnyExpression](fieldName string, value T) comparisonOperator {
-	return comparisonOperator{doc: aggregates.NewOperatorFilter("$gte", fieldName, value)}
+	return comparisonOperator{doc: filter.NewOperatorFilter("$gte", fieldName, value)}
 }
 
 // Lte Compares two values and returns:
@@ -86,5 +86,5 @@ func Gte[T expression.AnyExpression](fieldName string, value T) comparisonOperat
 // $lte has the following syntax:
 // { $lte: [ <expression1>, <expression2> ] }
 func Lte[T expression.AnyExpression](fieldName string, value T) comparisonOperator {
-	return comparisonOperator{doc: aggregates.NewOperatorFilter("$lte", fieldName, value)}
+	return comparisonOperator{doc: filter.NewOperatorFilter("$lte", fieldName, value)}
 }

@@ -33,6 +33,7 @@ func (User) Fields() []mongox.Field {
 		field.Int64s("int64s").Tag(`json:"aaaa"`).Optional(),
 		field.Strings("strings").Tag(`json:"aaaa"`).Optional(),
 		field.Floats("floats").Tag(`json:"aaaa"`).Optional(),
+		field.Arrays("array_any").Tag(`json:"aaaa"`),
 		field.Arrays("arrayobject_simple").Tag(`json:"aaaa"`).Attributes(
 			field.ObjectId("_id").Tag(`json:"aaaa"`).Optional().Descriptor(),
 			field.String("string").Tag(`json:"s1"`).Optional().Descriptor(),

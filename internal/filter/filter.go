@@ -1,7 +1,8 @@
-package aggregates
+package filter
 
 import (
 	"github.com/go-kenka/mongox/bsonx"
+	"github.com/go-kenka/mongox/internal/expression"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -25,13 +26,13 @@ func (s simpleFilter) Document() bson.D {
 	return s.BsonDocument().Document()
 }
 
-type operatorFilter[T bsonx.Expression] struct {
+type operatorFilter[T expression.AnyExpression] struct {
 	operatorName string
 	fieldName    string
 	value        T
 }
 
-func NewOperatorFilter[T bsonx.Expression](operatorName string, fieldName string, value T) operatorFilter[T] {
+func NewOperatorFilter[T expression.AnyExpression](operatorName string, fieldName string, value T) operatorFilter[T] {
 	return operatorFilter[T]{
 		operatorName: operatorName,
 		fieldName:    fieldName,

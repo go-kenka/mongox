@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/go-kenka/mongox/bsonx/expression"
+	"github.com/go-kenka/mongox/internal/expression"
 )
 
 type WindowOutputField interface {

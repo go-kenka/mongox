@@ -7,10 +7,10 @@ import (
 
 type DensifyConstructibleBson struct {
 	base     bsonx.Bson
-	appended bsonx.Document
+	appended *bsonx.Document
 }
 
-func NewDensifyConstructibleBson(base bsonx.Bson, appended bsonx.Document) DensifyConstructibleBson {
+func NewDensifyConstructibleBson(base bsonx.Bson, appended *bsonx.Document) DensifyConstructibleBson {
 	a := DensifyConstructibleBson{
 		base:     base,
 		appended: EmptyDoc,
@@ -42,12 +42,12 @@ func (a DensifyConstructibleBson) newAppended(name string, value any) DensifyCon
 	return a.newMutated(bsonx.Doc(name, value))
 }
 
-func (a DensifyConstructibleBson) newMutated(d bsonx.Document) DensifyConstructibleBson {
+func (a DensifyConstructibleBson) newMutated(d *bsonx.Document) DensifyConstructibleBson {
 	newAppended := bsonx.Empty()
-	for _, v := range a.appended {
+	for _, v := range a.appended.Document() {
 		newAppended.Append(v.Key, v.Value)
 	}
-	for _, v := range d {
+	for _, v := range d.Document() {
 		newAppended.Append(v.Key, v.Value)
 	}
 
