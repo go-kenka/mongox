@@ -4,7 +4,7 @@ import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
 	"github.com/go-kenka/mongox/internal/options"
-	utils "github.com/go-kenka/mongox/uitls"
+	utils "github.com/go-kenka/mongox/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

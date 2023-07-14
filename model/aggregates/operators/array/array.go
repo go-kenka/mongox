@@ -4,6 +4,7 @@ package array
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	utils "github.com/go-kenka/mongox/utils"
 )
 
 type arrayOperator struct {
@@ -220,7 +221,7 @@ func Size[A expression.ArrayExpression](input A) arrayOperator {
 func Slice[A expression.ArrayExpression, N expression.IntExpression](input A, position, n N) arrayOperator {
 	data := bsonx.Array()
 	data.Append(input)
-	if position != nil {
+	if !utils.IsZero(position) {
 		data.Append(position)
 	}
 	data.Append(n)

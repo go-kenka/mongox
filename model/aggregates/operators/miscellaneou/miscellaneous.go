@@ -3,6 +3,7 @@ package miscellaneou
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	utils "github.com/go-kenka/mongox/utils"
 )
 
 type miscellaneousOperator struct {
@@ -26,7 +27,7 @@ func (o miscellaneousOperator) Exp() bsonx.IBsonValue {
 //	 }
 //	}
 func GetField[T expression.ObjectExpression](filed string, input T) miscellaneousOperator {
-	if input != nil {
+	if !utils.IsZero(input) {
 		doc := bsonx.BsonEmpty()
 		doc.Append("field", bsonx.String(filed))
 		doc.Append("input", input)

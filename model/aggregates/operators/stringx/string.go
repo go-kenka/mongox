@@ -4,6 +4,7 @@ package stringx
 import (
 	"github.com/go-kenka/mongox/bsonx"
 	"github.com/go-kenka/mongox/internal/expression"
+	utils "github.com/go-kenka/mongox/utils"
 )
 
 type stringOperator struct {
@@ -36,10 +37,10 @@ func IndexOfBytes[T expression.StrExpression, N expression.IntExpression](str, s
 	data := bsonx.Array()
 	data.Append(str)
 	data.Append(sub)
-	if start != nil {
+	if !utils.IsZero(start) {
 		data.Append(start)
 	}
-	if end != nil {
+	if !utils.IsZero(end) {
 		data.Append(end)
 	}
 	return stringOperator{doc: bsonx.BsonDoc("$indexOfBytes", data)}
@@ -54,10 +55,10 @@ func IndexOfCP[T expression.StrExpression, N expression.IntExpression](str, sub 
 	data := bsonx.Array()
 	data.Append(str)
 	data.Append(sub)
-	if start != nil {
+	if !utils.IsZero(start) {
 		data.Append(start)
 	}
-	if end != nil {
+	if !utils.IsZero(end) {
 		data.Append(end)
 	}
 	return stringOperator{doc: bsonx.BsonDoc("$indexOfCP", data)}

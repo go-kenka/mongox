@@ -12,7 +12,7 @@ import (
 
 	"github.com/go-kenka/mongox/internal/code/gen"
 	"github.com/go-kenka/mongox/internal/code/load"
-	"github.com/go-kenka/mongox/uitls"
+	"github.com/go-kenka/mongox/utils"
 	"github.com/spf13/cobra"
 )
 
